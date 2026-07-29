@@ -2,94 +2,93 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-/* Theme Combination 1: Light Clean */
-.theme-light-clean {
-  background-color: #f8fafc;
-  color: #0f172a;
-  background-image: 
-    radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.06) 0%, transparent 45%),
-    radial-gradient(circle at 90% 15%, rgba(6, 182, 212, 0.06) 0%, transparent 45%);
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+  }
+
+  body {
+    @apply bg-[#f8fafc] text-slate-900 antialiased font-sans min-h-screen selection:bg-indigo-500/15 selection:text-indigo-900;
+    background-image: 
+      radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.04) 0%, transparent 40%),
+      radial-gradient(circle at 90% 15%, rgba(6, 182, 212, 0.04) 0%, transparent 40%);
+    background-attachment: fixed;
+  }
 }
 
-.theme-light-clean .glass-panel {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
+/* Custom Ultra Clean Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(241, 245, 249, 0.8);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(203, 213, 225, 0.8);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.6);
+}
+
+/* Ultra Clean White Glass Card */
+.glass-panel {
+  background: #ffffff;
   border: 1px solid rgba(226, 232, 240, 0.9);
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
   border-radius: 1rem;
 }
 
-/* Theme Combination 2: Dark Cyberpunk */
-.theme-dark-cyber {
-  background-color: #070a12;
-  color: #f8fafc;
-  background-image: 
-    radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.15) 0%, transparent 45%),
-    radial-gradient(circle at 85% 20%, rgba(6, 182, 212, 0.15) 0%, transparent 45%);
+.glass-panel-interactive {
+  @apply glass-panel transition-all duration-200 hover:border-indigo-300 hover:shadow-md;
 }
 
-.theme-dark-cyber .glass-panel {
-  background: rgba(15, 23, 42, 0.8);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(99, 102, 241, 0.25);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-  border-radius: 1rem;
-}
-
-/* Theme Combination 3: Sunset Glow */
-.theme-sunset-glow {
-  background-color: #18111e;
-  color: #fff1f2;
-  background-image: 
-    radial-gradient(circle at 10% 15%, rgba(244, 63, 94, 0.18) 0%, transparent 45%),
-    radial-gradient(circle at 85% 85%, rgba(245, 158, 11, 0.15) 0%, transparent 45%);
-}
-
-.theme-sunset-glow .glass-panel {
-  background: rgba(28, 19, 36, 0.85);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(244, 63, 94, 0.25);
-  box-shadow: 0 8px 32px 0 rgba(244, 63, 94, 0.15);
-  border-radius: 1rem;
-}
-
-/* Theme Combination 4: Nordic Slate */
-.theme-nordic-slate {
-  background-color: #0f172a;
-  color: #f1f5f9;
-  background-image: 
-    radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.12) 0%, transparent 45%),
-    radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.12) 0%, transparent 45%);
-}
-
-.theme-nordic-slate .glass-panel {
-  background: rgba(30, 41, 59, 0.85);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-  border-radius: 1rem;
-}
-
-/* Interactive Pill Styling */
 .glass-pill {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
   border-radius: 9999px;
   padding: 0.25rem 0.75rem;
   font-size: 0.75rem;
   font-weight: 600;
+  color: #334155;
 }
 
-/* Mermaid SVG General Styles */
+/* Mermaid SVG Light Mode Styling Overrides */
 .mermaid svg {
   max-width: 100% !important;
   height: auto !important;
   font-family: 'Inter', sans-serif !important;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 2px 6px rgba(15, 23, 42, 0.04));
 }
 
 .mermaid .node rect,
 .mermaid .node circle,
 .mermaid .node polygon,
 .mermaid .node path {
-  rx: 10px !important;
-  ry: 10px !important;
+  fill: #ffffff !important;
+  stroke: #4f46e5 !important;
+  stroke-width: 2px !important;
+  rx: 8px !important;
+  ry: 8px !important;
+}
+
+.mermaid .edgePath .path {
+  stroke: #0284c7 !important;
+  stroke-width: 2px !important;
+}
+
+.mermaid .marker {
+  fill: #0284c7 !important;
+  stroke: #0284c7 !important;
+}
+
+.mermaid .label {
+  color: #0f172a !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
 }
