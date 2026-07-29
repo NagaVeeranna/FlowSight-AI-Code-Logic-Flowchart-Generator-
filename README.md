@@ -1,129 +1,134 @@
-# FlowSight – AI Code Logic & Flowchart Generator 🚀
+# FlowSight – AI Code Logic & Flowchart Generator 🔍⚡
 
-**FlowSight** is an AI-powered web application that transforms source code into human-readable step-by-step logic, edge case analyses, and interactive Mermaid.js flowcharts.
+**FlowSight** is a production-quality, enterprise-grade web application that converts source code across multiple programming languages (**Python, Java, JavaScript, C++, C**) into:
 
-Designed for students, developers, faculty, and interview candidates, FlowSight makes reading and understanding complex code effortless.
+1. **Human-Readable Step-by-Step Logic Breakdown**
+2. **Interactive Vector Flowcharts (Mermaid.js)**
+3. **Evidence-Based Static Analysis & Security Audit**
+4. **AI Code Quality Scorecard (0–100 Rating & Grades)**
 
 ---
 
 ## 🌟 Key Features
 
-* **Multi-Language Support**:
-  * Python 3
-  * Java
-  * JavaScript / Node.js
-  * C++
-  * C
-* **Interactive Code Visualizer**:
-  * Instant Mermaid.js flowchart rendering
-  * Vector pan, zoom in/out, reset, and fullscreen controls powered by `react-zoom-pan-pinch`
-  * One-click download as **PNG** or **SVG**
-  * Copy raw Mermaid syntax
-* **Comprehensive AI Analysis**:
-  * **Line-by-line** code explanation
-  * **Algorithm summary** & overall objective
-  * **Variables & state** tracking
-  * **Control flow** sequence execution
-  * **Edge case detection** & failure risk levels
-  * **Time & Space Complexity** estimation ($O(N)$, $O(\log N)$, etc.)
-* **Monaco Code Editor**:
-  * Real-time syntax highlighting
-  * Preset sample code quick-loader (Binary Search, Merge Sort, JWT Middleware, Linked List Reversal, DFS Graph)
-  * Direct source file upload (`.py`, `.java`, `.js`, `.cpp`, `.c`)
-  * Line and character counts
-* **Local History Manager**:
-  * Automatically saves previous code analyses in browser `localStorage`
-  * Filter by language and search by keyword
-  * Re-open previous sessions with one click
-* **Resilient AI Pipeline**:
-  * Strict JSON schema enforcement with Google Gemini API
-  * Automatic Mermaid syntax validation & corrective retry loop
+### 💻 1. Multi-Language Monaco Code Editor Workspace
+- **IDE-Grade Editing**: Powered by `@monaco-editor/react` with syntax highlighting and line/character counters.
+- **Language Support**: Seamlessly switch between **Python**, **Java**, **JavaScript**, **C++**, and **C**.
+- **File Upload Support**: Drag and drop or upload `.py`, `.java`, `.js`, `.cpp`, or `.c` files directly.
+- **Preset Algorithm Library**: Built-in sample algorithms (Binary Search, Merge Sort, JWT Authentication, Linked List Reversal, Depth-First Search).
+
+### 📊 2. Interactive Flowchart Visualization Engine
+- **Mermaid.js Vector Diagrams**: Renders clean, high-contrast flowcharts with decision diamonds and iteration loops.
+- **Layout Orientation Toggle**: Switch dynamically between **Top-Down (TD)** and **Left-to-Right (LR)** layouts with 1 click.
+- **Pan & Zoom Canvas**: Built-in vector zoom in/out, pan, reset, and full-screen mode powered by `react-zoom-pan-pinch`.
+- **Export Options**: One-click download for **High-Res PNG**, **Vector SVG**, or copy raw **Mermaid Code**.
+
+### 🛡️ 3. Evidence-Based Dynamic Adaptive Code Analysis
+- **Truthful Extraction (No Guesses)**: Analyzes source code first and reports ONLY features backed by evidence.
+  - **Algorithms Detected**: Binary Search, DFS/BFS, Quick Sort, Merge Sort, Dynamic Programming, Two Pointers.
+  - **Data Structures**: Array, ArrayList, LinkedList, HashMap, HashSet, Stack, Queue.
+  - **OOP Concepts**: Class Encapsulation, Inheritance, Interfaces, Polymorphism, Static Members.
+  - **Verified Design Patterns**: Factory, Strategy, Fallback, Validation, Repository.
+- **Security & Code Smells Audit**: Scans for unstringified SQL query patterns, hardcoded API keys/secrets, missing input validation, long functions (`>60 LOC`), and deep nesting (`>= 3 levels`).
+
+### 🏆 4. AI Code Quality Scorecard
+- **Overall Score**: 0 to 100 calculated rating.
+- **Letter Grades (A–F)**:
+  - **Maintainability Grade**
+  - **Readability Grade**
+  - **Performance Grade**
+  - **Reliability Grade**
+
+### ⚡ 5. Zero-Latency Resiliency & AST Fallback
+- **Guaranteed HTTP 200 Uptime**: Built-in **FlowSight Static AST Parser** (`utils/static-flowchart-generator.ts`).
+- **Quota Safeguard**: Automatically falls back to local AST generation when Google Gemini API keys hit rate limits (`429 Too Many Requests`) or invalid key formats without failing.
+
+### 💾 6. Local Session History Drawer
+- **Persistent Storage**: Automatically saves past analyses in client-side `localStorage`.
+- **Search & Filter**: Real-time keyword search and language filtering.
+- **One-Click Restore**: Reopen previous analyses or clear history cleanly.
 
 ---
 
-## 🛠️ Technology Stack
+## 🛠️ Tech Stack & Architecture
 
-* **Frontend**: Next.js 14 (App Router), React 18, TypeScript
-* **Styling**: Tailwind CSS, Glassmorphic Dark UI, Lucide Icons
-* **Code Editor**: `@monaco-editor/react`
-* **Diagram Engine**: `mermaid` + `react-zoom-pan-pinch` + `html-to-image`
-* **AI Core**: Google Gemini API (`@google/generative-ai` SDK with `gemini-1.5-flash`)
-* **Storage**: LocalStorage API
-
----
-
-## 🚀 Quick Start Guide
-
-### Prerequisites
-* **Node.js**: v18.0.0 or higher
-* **npm**: v9.0.0 or higher
-* **Gemini API Key**: Free key from [Google AI Studio](https://aistudio.google.com/)
-
-### Installation Steps
-
-1. **Clone or Download Repository**:
-   ```bash
-   git clone https://github.com/your-username/FlowSight.git
-   cd FlowSight
-   ```
-
-2. **Install Dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Configure Environment Variables**:
-   Create a `.env.local` file in the root directory:
-   ```env
-   GEMINI_API_KEY=your_gemini_api_key_here
-   ```
-
-4. **Start Development Server**:
-   ```bash
-   npm run dev
-   ```
-   Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-5. **Build for Production**:
-   ```bash
-   npm run build
-   npm run start
-   ```
+- **Frontend Framework**: [Next.js 14](https://nextjs.org/) (App Router), TypeScript, React 18
+- **UI & Styling**: Tailwind CSS, Material-UI (`@mui/material`), Lucide Icons
+- **Code Editor**: Monaco Editor (`@monaco-editor/react`)
+- **Diagram Engine**: Mermaid.js, `react-zoom-pan-pinch`, `html-to-image`
+- **AI Core**: Google Gemini API (`@google/generative-ai` SDK)
+- **Static Parser**: Custom TypeScript AST & Regex Rule Engine
 
 ---
 
-## 🧪 Presets & Manual Testing
+## 🚀 Quick Start & Installation
 
-FlowSight includes pre-loaded sample snippets for instant testing:
-* **Binary Search (Python)**: Demonstrates logarithmic divide-and-conquer while loops and conditional returns.
-* **Merge Sort (Java)**: Demonstrates recursive function calls, sub-array slicing, and linear merge phases.
-* **JWT Authentication Middleware (JavaScript)**: Demonstrates web API authorization pipelines, bearer token parsing, and HTTP status handling.
-* **Singly Linked List Reversal (C++)**: Demonstrates pointer manipulation and in-place reference changes.
-* **Depth-First Search DFS (C)**: Demonstrates graph node traversal, adjacency lists, and recursion depth tracking.
+### 1. Clone the Repository
+```bash
+git clone https://github.com/NagaVeeranna/FlowSight-AI-Code-Logic-Flowchart-Generator-.git
+cd FlowSight
+```
+
+### 2. Install Dependencies
+```bash
+npm install
+```
+
+### 3. Configure Environment Variables
+Create a `.env.local` file in the root directory:
+```env
+# Google Gemini API Key from Google AI Studio (https://aistudio.google.com/)
+GEMINI_API_KEY=AIzaSyYourActualGoogleGeminiApiKeyHere
+```
+*(Note: If no API key is provided, FlowSight automatically activates its local zero-latency AST generator fallback engine).*
+
+### 4. Run Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### 5. Production Build
+```bash
+npm run build
+npm start
+```
 
 ---
 
-## ☁️ Deployment on Vercel
+## 📁 Directory Structure
 
-1. Push your repository to GitHub / GitLab / Bitbucket.
-2. Import the repository in [Vercel Dashboard](https://vercel.com/new).
-3. Under **Environment Variables**, add:
-   * **Key**: `GEMINI_API_KEY`
-   * **Value**: *Your Google Gemini API Key*
-4. Click **Deploy**. Vercel will automatically build and publish your Next.js application.
+```text
+FlowSight/
+├── app/
+│   ├── api/
+│   │   └── analyze/
+│   │       └── route.ts         # Serverless API endpoint with Gemini SDK & static fallback
+│   ├── globals.css              # Pure white high-contrast theme & glassmorphic utilities
+│   ├── layout.tsx               # Root layout & Google Font loaders (Inter & Fira Code)
+│   └── page.tsx                 # Main dashboard split-panel layout
+├── components/
+│   ├── CodeEditor.tsx           # Monaco Editor component with language & preset loaders
+│   ├── ExplanationPanel.tsx     # Tabbed logic breakdown, scorecards, metrics & risk audit
+│   ├── FlowchartViewer.tsx      # Interactive Mermaid SVG viewer with pan/zoom & exports
+│   ├── Header.tsx               # High-contrast navigation header with history drawer trigger
+│   └── HistorySidebar.tsx       # Slide-over local analysis history manager
+├── constants/
+│   └── samples.ts               # Preset algorithm code library across 5 languages
+├── types/
+│   └── analysis.ts              # TypeScript interfaces for request/response & metrics
+├── utils/
+│   ├── mermaid-validator.ts     # Mermaid syntax sanitizer and structure checker
+│   ├── static-flowchart-generator.ts # AST rule parser for zero-latency fallback engine
+│   └── storage.ts               # LocalStorage CRUD helper
+├── README.md
+├── ARCHITECTURE.md
+├── API_DOCS.md
+└── FOLDER_STRUCTURE.md
+```
 
 ---
 
-## 🔮 Future Scope & Roadmap
+## 📜 License & Acknowledgments
 
-* **Cyclomatic Complexity Analysis**: Real-time code branch complexity scoring.
-* **Multi-File Repository Analysis**: Parse multi-file GitHub repositories using RAG.
-* **Code Smell & Bug Detection**: Highlight potential memory leaks, unhandled promises, or null pointer dereferences.
-* **PDF Report Generation**: Export full technical reports containing code, diagram, and complexity metrics.
-* **Team Collaboration & Cloud History**: Sync analysis records across user accounts.
-
----
-
-## 📝 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
+Built with ❤️ for the Internship Project Demonstration. Designed with an emphasis on code visualization, AI resiliency, and evidence-based static software analysis.
