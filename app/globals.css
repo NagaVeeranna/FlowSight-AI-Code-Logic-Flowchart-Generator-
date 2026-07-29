@@ -9,61 +9,61 @@
   }
 
   body {
-    @apply bg-[#f8fafc] text-slate-900 antialiased font-sans min-h-screen selection:bg-indigo-500/15 selection:text-indigo-900;
+    @apply bg-[#f8fafc] text-slate-900 antialiased font-sans min-h-screen selection:bg-indigo-500/20 selection:text-indigo-900;
     background-image: 
-      radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.04) 0%, transparent 40%),
-      radial-gradient(circle at 90% 15%, rgba(6, 182, 212, 0.04) 0%, transparent 40%);
+      radial-gradient(circle at 10% 10%, rgba(79, 70, 229, 0.05) 0%, transparent 40%),
+      radial-gradient(circle at 90% 15%, rgba(2, 132, 199, 0.05) 0%, transparent 40%);
     background-attachment: fixed;
   }
 }
 
-/* Custom Ultra Clean Scrollbars */
+/* Custom Crisp Light Scrollbars */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(241, 245, 249, 0.8);
+  background: rgba(241, 245, 249, 0.9);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(203, 213, 225, 0.8);
+  background: rgba(203, 213, 225, 0.9);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(99, 102, 241, 0.6);
+  background: rgba(79, 70, 229, 0.7);
 }
 
-/* Ultra Clean White Glass Card */
+/* Crisp White Panel Styling */
 .glass-panel {
   background: #ffffff;
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
   border-radius: 1rem;
 }
 
 .glass-panel-interactive {
-  @apply glass-panel transition-all duration-200 hover:border-indigo-300 hover:shadow-md;
+  @apply glass-panel transition-all duration-200 hover:border-indigo-400 hover:shadow-md;
 }
 
 .glass-pill {
   background: #f1f5f9;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #cbd5e1;
   border-radius: 9999px;
   padding: 0.25rem 0.75rem;
   font-size: 0.75rem;
-  font-weight: 600;
-  color: #334155;
+  font-weight: 700;
+  color: #1e293b;
 }
 
-/* Mermaid SVG Light Mode Styling Overrides */
+/* Mermaid SVG Crisp Light Mode Styling Overrides */
 .mermaid svg {
   max-width: 100% !important;
   height: auto !important;
   font-family: 'Inter', sans-serif !important;
-  filter: drop-shadow(0 2px 6px rgba(15, 23, 42, 0.04));
+  filter: drop-shadow(0 2px 6px rgba(15, 23, 42, 0.05));
 }
 
 .mermaid .node rect,
@@ -90,5 +90,5 @@
 .mermaid .label {
   color: #0f172a !important;
   font-size: 13px !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
 }
