@@ -12,6 +12,7 @@ interface CodeEditorProps {
   onChangeLanguage: (lang: SupportedLanguage) => void;
   onAnalyze: () => void;
   isLoading: boolean;
+  monacoTheme: 'vs' | 'vs-dark';
 }
 
 export const CodeEditor: React.FC<CodeEditorProps> = ({
@@ -21,6 +22,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   onChangeLanguage,
   onAnalyze,
   isLoading,
+  monacoTheme,
 }) => {
   const [copied, setCopied] = React.useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -68,24 +70,24 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   const charCount = code.length;
 
   return (
-    <div className="flex flex-col h-full w-full glass-panel border border-slate-200/90 rounded-2xl overflow-hidden shadow-sm transition-all duration-300">
+    <div className="flex flex-col h-full w-full glass-panel border border-slate-700/40 rounded-2xl overflow-hidden shadow-sm transition-all duration-300">
       {/* Top Toolbar */}
-      <div className="px-4 py-3 bg-slate-100/90 border-b border-slate-200/90 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="px-4 py-3 bg-slate-900/90 border-b border-slate-700/50 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         {/* Language & Preset Controls */}
         <div className="flex flex-wrap items-center gap-2.5">
-          <div className="flex items-center space-x-2 text-indigo-600 mr-1">
-            <Code2 className="w-5 h-5 text-indigo-600" />
-            <span className="text-sm font-bold text-slate-800 tracking-wide">Editor</span>
+          <div className="flex items-center space-x-2 text-cyan-400 mr-1">
+            <Code2 className="w-5 h-5 text-cyan-400" />
+            <span className="text-sm font-bold text-slate-100 tracking-wide">Editor</span>
           </div>
 
           {/* Language Selector */}
           <select
             value={language}
             onChange={(e) => onChangeLanguage(e.target.value as SupportedLanguage)}
-            className="bg-white border border-slate-300 text-slate-800 text-xs rounded-xl px-3 py-1.5 font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/30 cursor-pointer shadow-2xs"
+            className="bg-slate-800 border border-slate-700 text-cyan-300 text-xs rounded-xl px-3 py-1.5 font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer shadow-2xs"
           >
             {SUPPORTED_LANGUAGES.map((lang) => (
-              <option key={lang.id} value={lang.id} className="bg-white text-slate-800">
+              <option key={lang.id} value={lang.id} className="bg-slate-900 text-slate-200">
                 {lang.name}
               </option>
             ))}
@@ -95,13 +97,13 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           <select
             defaultValue=""
             onChange={(e) => handleSelectSample(e.target.value)}
-            className="bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs rounded-xl px-3 py-1.5 font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/30 cursor-pointer max-w-[170px] sm:max-w-xs truncate shadow-2xs"
+            className="bg-indigo-950/80 border border-indigo-700 text-indigo-200 text-xs rounded-xl px-3 py-1.5 font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer max-w-[170px] sm:max-w-xs truncate shadow-2xs"
           >
-            <option value="" disabled className="bg-white text-slate-500">
+            <option value="" disabled className="bg-slate-900 text-slate-400">
               Preset Algorithms...
             </option>
             {SAMPLE_CODES.map((s) => (
-              <option key={s.id} value={s.id} className="bg-white text-slate-800">
+              <option key={s.id} value={s.id} className="bg-slate-900 text-slate-200">
                 {s.title}
               </option>
             ))}
@@ -121,7 +123,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           <Tooltip title="Upload Source File (.py, .java, .js, .cpp, .c)" arrow>
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-200/80 transition-colors"
+              className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
             >
               <Upload className="w-4 h-4" />
             </button>
@@ -132,9 +134,9 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             <button
               onClick={handleCopyCode}
               disabled={!code}
-              className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-200/80 transition-colors disabled:opacity-40"
+              className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 transition-colors disabled:opacity-40"
             >
-              {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+              {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
             </button>
           </Tooltip>
 
@@ -143,7 +145,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             <button
               onClick={() => onChangeCode('')}
               disabled={!code}
-              className="p-2 rounded-xl text-slate-600 hover:text-rose-600 hover:bg-slate-200/80 transition-colors disabled:opacity-40"
+              className="p-2 rounded-xl text-slate-300 hover:text-rose-400 hover:bg-slate-800 transition-colors disabled:opacity-40"
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -151,14 +153,14 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         </div>
       </div>
 
-      {/* Monaco Editor Container in Light/VS mode */}
+      {/* Monaco Editor Container with Dynamic Monaco Theme */}
       <div className="flex-1 w-full relative min-h-[380px] sm:min-h-[440px] lg:min-h-[480px]">
         <Editor
           height="100%"
           language={selectedLangObj.monacoLanguage}
           value={code}
           onChange={(val) => onChangeCode(val || '')}
-          theme="light"
+          theme={monacoTheme}
           options={{
             minimap: { enabled: false },
             fontSize: 13,
@@ -175,17 +177,17 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
       </div>
 
       {/* Footer / Analyze Bar */}
-      <div className="px-4 py-3 bg-slate-100/90 border-t border-slate-200/90 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div className="text-xs text-slate-600 flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
-          <span className="font-mono font-bold text-indigo-700">{lineCount} {lineCount === 1 ? 'line' : 'lines'}</span>
+      <div className="px-4 py-3 bg-slate-900/90 border-t border-slate-700/50 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="text-xs text-slate-300 flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
+          <span className="font-mono font-bold text-cyan-400">{lineCount} {lineCount === 1 ? 'line' : 'lines'}</span>
           <span>•</span>
-          <span className="font-mono text-slate-500">{charCount} chars</span>
+          <span className="font-mono text-slate-400">{charCount} chars</span>
         </div>
 
         <button
           onClick={onAnalyze}
           disabled={isLoading || !code.trim()}
-          className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-cyan-600 text-white text-xs font-bold shadow-md hover:shadow-lg hover:brightness-105 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2.5"
+          className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 text-white text-xs font-extrabold shadow-md hover:shadow-lg hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2.5"
         >
           {isLoading ? (
             <>
@@ -194,7 +196,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             </>
           ) : (
             <>
-              <Sparkles className="w-4 h-4 text-cyan-200" />
+              <Sparkles className="w-4 h-4 text-cyan-300 animate-pulse" />
               <span>Generate Flowchart & Logic</span>
             </>
           )}

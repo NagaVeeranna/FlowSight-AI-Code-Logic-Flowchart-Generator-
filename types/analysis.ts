@@ -1,4 +1,15 @@
 export type SupportedLanguage = 'python' | 'java' | 'javascript' | 'cpp' | 'c';
+export type ThemeCombination = 'light-clean' | 'dark-cyber' | 'sunset-glow' | 'nordic-slate';
+export type DiagramOrientation = 'TD' | 'LR';
+
+export interface ThemePreset {
+  id: ThemeCombination;
+  name: string;
+  badgeColor: string;
+  monacoTheme: 'vs' | 'vs-dark';
+  mermaidTheme: 'default' | 'dark' | 'neutral';
+  bodyClass: string;
+}
 
 export interface LanguageOption {
   id: SupportedLanguage;
