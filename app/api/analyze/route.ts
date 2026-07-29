@@ -102,6 +102,8 @@ export async function POST(req: NextRequest) {
     const MODEL_CANDIDATES = [
       'gemini-2.0-flash',
       'gemini-1.5-flash',
+      'gemini-2.0-flash-lite',
+      'gemini-1.5-pro',
     ];
 
     const userPrompt = `Target Language: ${language}\n\nSource Code:\n\`\`\`${language}\n${code}\n\`\`\``;
@@ -131,15 +133,21 @@ export async function POST(req: NextRequest) {
           }
           return JSON.parse(responseText) as AnalysisResponse;
         } catch (err: any) {
-          const isQuota = err?.status === 429 || err?.message?.includes('429') || err?.message?.includes('Quota');
-          if (isQuota) {
-            console.warn(`Gemini API Quota/Rate limit reached on '${modelName}'.`);
-            throw new Error('Gemini API Free Tier rate limit reached. Please wait ~30-45 seconds before clicking analyze again, or get a new free API key from https://aistudio.google.com/.');
-          }
-
-          console.warn(`Model '${modelName}' call failed (${err?.message || err}). Trying next candidate...`);
+          console.warn(`Model '${modelName}' attempt failed: ${err?.message || err}. Trying next candidate...`);
           lastError = err;
         }
+      }
+
+      // If all candidates failed, check if it was due to rate limits
+      const isQuota =
+        lastError?.status === 429 ||
+        lastError?.message?.includes('429') ||
+        lastError?.message?.includes('Quota');
+
+      if (isQuota) {
+        throw new Error(
+          'Gemini API Free Tier rate limit reached. Please wait ~30-45 seconds before clicking analyze again, or get a new free API key from https://aistudio.google.com/.'
+        );
       }
 
       throw lastError || new Error('All Gemini model candidates failed to respond.');
