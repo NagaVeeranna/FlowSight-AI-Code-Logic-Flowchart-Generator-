@@ -37,10 +37,10 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
 
   if (!explanation) {
     return (
-      <div className="glass-panel flex flex-col h-full border border-slate-800 rounded-xl p-8 items-center justify-center text-center space-y-3 text-slate-500">
-        <BookOpen className="w-12 h-12 text-slate-700 stroke-1" />
-        <h3 className="text-sm font-medium text-slate-400">No Explanation Ready</h3>
-        <p className="text-xs max-w-xs text-slate-500">
+      <div className="glass-panel flex flex-col h-full border border-slate-800 rounded-xl p-6 sm:p-8 items-center justify-center text-center space-y-3 text-slate-500">
+        <BookOpen className="w-10 h-10 sm:w-12 sm:h-12 text-slate-700 stroke-1" />
+        <h3 className="text-xs sm:text-sm font-medium text-slate-400">No Explanation Ready</h3>
+        <p className="text-[11px] sm:text-xs max-w-xs text-slate-500">
           Program breakdown, line-by-line logic, and edge cases will appear here after analysis.
         </p>
       </div>
@@ -55,13 +55,13 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
   };
 
   return (
-    <div className="glass-panel flex flex-col h-full border border-slate-800 rounded-xl overflow-hidden shadow-glass-lg">
-      {/* Top Header & Tabs */}
-      <div className="bg-surface-900/90 border-b border-slate-800 px-4 py-2.5 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center space-x-1 overflow-x-auto py-1 scrollbar-none">
+    <div className="glass-panel flex flex-col h-full w-full border border-slate-800 rounded-xl overflow-hidden shadow-glass-lg">
+      {/* Top Header & Horizontal Scrollable Tabs */}
+      <div className="bg-surface-900/90 border-b border-slate-800 px-3 sm:px-4 py-2 flex items-center justify-between gap-2 overflow-hidden">
+        <div className="flex items-center space-x-1.5 overflow-x-auto py-1 scrollbar-none max-w-full">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center space-x-1.5 ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0 flex items-center space-x-1.5 ${
               activeTab === 'overview'
                 ? 'bg-brand-600 text-white shadow-glow-indigo'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -73,7 +73,7 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
 
           <button
             onClick={() => setActiveTab('stepByStep')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center space-x-1.5 ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0 flex items-center space-x-1.5 ${
               activeTab === 'stepByStep'
                 ? 'bg-brand-600 text-white shadow-glow-indigo'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -85,7 +85,7 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
 
           <button
             onClick={() => setActiveTab('variables')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center space-x-1.5 ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0 flex items-center space-x-1.5 ${
               activeTab === 'variables'
                 ? 'bg-brand-600 text-white shadow-glow-indigo'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -97,7 +97,7 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
 
           <button
             onClick={() => setActiveTab('flow')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center space-x-1.5 ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0 flex items-center space-x-1.5 ${
               activeTab === 'flow'
                 ? 'bg-brand-600 text-white shadow-glow-indigo'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -109,7 +109,7 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
 
           <button
             onClick={() => setActiveTab('edgeCases')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center space-x-1.5 ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0 flex items-center space-x-1.5 ${
               activeTab === 'edgeCases'
                 ? 'bg-brand-600 text-white shadow-glow-indigo'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -122,7 +122,7 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
 
         <button
           onClick={handleCopyExplanation}
-          className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+          className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors shrink-0"
           title="Copy Explanation Summary"
         >
           {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
@@ -130,12 +130,12 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
       </div>
 
       {/* Tab Content Container */}
-      <div className="flex-1 p-5 overflow-y-auto max-h-[380px] text-xs text-slate-300 space-y-4">
+      <div className="flex-1 p-3.5 sm:p-5 overflow-y-auto max-h-[380px] lg:max-h-none text-xs text-slate-300 space-y-4">
         {/* Tab 1: Overview */}
         {activeTab === 'overview' && (
           <div className="space-y-4 animate-fade-in">
             {summary && (
-              <div className="p-3.5 rounded-xl bg-indigo-950/40 border border-indigo-800/40 text-indigo-200 font-medium">
+              <div className="p-3 sm:p-3.5 rounded-xl bg-indigo-950/40 border border-indigo-800/40 text-indigo-200 font-medium">
                 {summary}
               </div>
             )}
@@ -147,7 +147,7 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
               <p className="leading-relaxed text-slate-300">{explanation.overview}</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
               <div className="p-3 rounded-lg bg-surface-900 border border-slate-800">
                 <span className="text-[11px] font-semibold text-slate-400 block mb-1">Inputs</span>
                 <p className="text-slate-200">{explanation.inputs || 'N/A'}</p>
@@ -159,13 +159,13 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
             </div>
 
             {/* Complexity Badges */}
-            <div className="flex flex-wrap items-center gap-3 pt-2">
-              <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700">
-                <Clock className="w-4 h-4 text-accent-cyan" />
+            <div className="flex flex-wrap items-center gap-2.5 pt-1">
+              <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700 text-xs">
+                <Clock className="w-4 h-4 text-accent-cyan shrink-0" />
                 <span><strong className="text-slate-200">Time:</strong> {explanation.timeComplexity}</span>
               </div>
-              <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700">
-                <HardDrive className="w-4 h-4 text-accent-purple" />
+              <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700 text-xs">
+                <HardDrive className="w-4 h-4 text-accent-purple shrink-0" />
                 <span><strong className="text-slate-200">Space:</strong> {explanation.spaceComplexity}</span>
               </div>
             </div>
@@ -198,7 +198,7 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
         {activeTab === 'variables' && (
           <div className="space-y-3 animate-fade-in">
             {explanation.variables?.length ? (
-              <div className="grid grid-cols-1 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {explanation.variables.map((v, i) => (
                   <div
                     key={i}

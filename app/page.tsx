@@ -96,7 +96,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface-950 text-slate-100">
+    <div className="min-h-screen flex flex-col bg-surface-950 text-slate-100 selection:bg-brand-500/30">
       {/* Header Bar */}
       <Header
         onToggleHistory={() => setIsHistoryOpen(!isHistoryOpen)}
@@ -105,9 +105,9 @@ export default function Home() {
 
       {/* Toast Notification Banner */}
       {toast && (
-        <div className="fixed top-20 right-6 z-40 animate-slide-up">
+        <div className="fixed top-16 sm:top-20 right-4 sm:right-6 z-40 animate-slide-up max-w-sm sm:max-w-md">
           <div
-            className={`flex items-center space-x-2.5 px-4 py-3 rounded-xl shadow-2xl backdrop-blur-md border text-xs font-medium ${
+            className={`flex items-center space-x-2.5 px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl shadow-2xl backdrop-blur-md border text-xs font-medium ${
               toast.type === 'success'
                 ? 'bg-emerald-950/90 border-emerald-700/60 text-emerald-200'
                 : toast.type === 'error'
@@ -116,16 +116,16 @@ export default function Home() {
             }`}
           >
             {toast.type === 'success' ? (
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
             ) : toast.type === 'error' ? (
-              <AlertCircle className="w-4 h-4 text-rose-400" />
+              <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
             ) : (
-              <Info className="w-4 h-4 text-indigo-400" />
+              <Info className="w-4 h-4 text-indigo-400 shrink-0" />
             )}
-            <span>{toast.message}</span>
+            <span className="flex-1">{toast.message}</span>
             <button
               onClick={() => setToast(null)}
-              className="p-1 hover:bg-white/10 rounded-lg ml-2"
+              className="p-1 hover:bg-white/10 rounded-lg ml-1 shrink-0"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -134,9 +134,9 @@ export default function Home() {
       )}
 
       {/* Main Workspace Layout */}
-      <main className="flex-1 p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-[1800px] w-full mx-auto">
+      <main className="flex-1 p-3 sm:p-5 lg:p-6 grid grid-cols-1 xl:grid-cols-12 gap-5 max-w-[1920px] w-full mx-auto items-stretch">
         {/* Left Side: Monaco Code Editor */}
-        <section className="flex flex-col h-full min-h-[500px]">
+        <section className="xl:col-span-5 flex flex-col h-full min-h-[440px] sm:min-h-[500px] xl:h-[calc(100vh-5.5rem)]">
           <CodeEditor
             code={code}
             language={language}
@@ -148,18 +148,18 @@ export default function Home() {
         </section>
 
         {/* Right Side: Flowchart Diagram & Explanation Breakdown */}
-        <section className="flex flex-col space-y-6 h-full min-h-[500px]">
+        <section className="xl:col-span-7 flex flex-col space-y-5 h-full min-h-[500px] xl:h-[calc(100vh-5.5rem)]">
           {/* Error Banner */}
           {errorMessage && (
-            <div className="p-4 rounded-xl bg-rose-950/40 border border-rose-800/50 flex items-start space-x-3 text-rose-200 text-xs">
+            <div className="p-3.5 sm:p-4 rounded-xl bg-rose-950/40 border border-rose-800/50 flex items-start space-x-3 text-rose-200 text-xs shrink-0">
               <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
               <div className="flex-1">
-                <strong className="block font-semibold mb-0.5">Analysis Failed</strong>
+                <strong className="block font-semibold mb-0.5">Analysis Issue</strong>
                 <p>{errorMessage}</p>
               </div>
               <button
                 onClick={() => setErrorMessage(null)}
-                className="p-1 hover:bg-rose-900/50 rounded"
+                className="p-1 hover:bg-rose-900/50 rounded shrink-0"
               >
                 <X className="w-4 h-4 text-rose-300" />
               </button>
@@ -167,7 +167,7 @@ export default function Home() {
           )}
 
           {/* Top Panel: Interactive Flowchart Viewer */}
-          <div className="h-[420px] shrink-0">
+          <div className="h-[380px] sm:h-[450px] xl:h-[55%] shrink-0">
             <FlowchartViewer
               mermaidCode={analysisResult?.mermaidCode || null}
               isLoading={isLoading}
@@ -176,7 +176,7 @@ export default function Home() {
           </div>
 
           {/* Bottom Panel: Detailed Explanation Breakdown */}
-          <div className="flex-1 min-h-[300px]">
+          <div className="flex-1 min-h-[320px] xl:min-h-0 overflow-hidden">
             <ExplanationPanel
               summary={analysisResult?.summary || null}
               explanation={analysisResult?.explanation || null}
