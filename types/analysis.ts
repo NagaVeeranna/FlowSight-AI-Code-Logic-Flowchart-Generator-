@@ -30,10 +30,27 @@ export interface EdgeCaseInfo {
   riskLevel: 'low' | 'medium' | 'high';
 }
 
+export interface CodeMetrics {
+  linesOfCode: number;
+  functions: number;
+  loops: number;
+  conditions: number;
+  complexityScore: string;
+  maintainability: string;
+}
+
+export interface TimeComplexityDetail {
+  geminiAnalysis?: string;
+  staticParser?: string;
+  overall?: string;
+}
+
 export interface DetailedExplanation {
   overview: string;
   inputs: string;
   outputs: string;
+  classes?: string[];
+  methods?: string[];
   lineByLine: {
     lineRange: string;
     codeSnippet: string;
@@ -42,7 +59,13 @@ export interface DetailedExplanation {
   variables: VariableInfo[];
   controlFlow: string[];
   edgeCases: EdgeCaseInfo[];
+  concepts?: string[];
+  designPatterns?: string[];
+  possibleIssues?: string[];
+  recommendations?: string[];
+  metrics?: CodeMetrics;
   timeComplexity: string;
+  timeComplexityDetail?: TimeComplexityDetail;
   spaceComplexity: string;
 }
 
