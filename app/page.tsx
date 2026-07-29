@@ -23,38 +23,15 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
-  // Theme Management (Dark / Light)
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-
   // History Drawer State
   const [historyItems, setHistoryItems] = useState<HistoryItem[]>([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState<boolean>(false);
 
-  // Load saved theme & history on mount
+  // Load history on mount
   useEffect(() => {
-    const savedHistory = HistoryStorage.getAll();
-    setHistoryItems(savedHistory);
-
-    const savedTheme = (localStorage.getItem('flowsight_theme') as 'dark' | 'light') || 'dark';
-    setTheme(savedTheme);
+    const saved = HistoryStorage.getAll();
+    setHistoryItems(saved);
   }, []);
-
-  // Update HTML root class whenever theme changes
-  useEffect(() => {
-    const root = document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-      root.classList.remove('light');
-    } else {
-      root.classList.add('light');
-      root.classList.remove('dark');
-    }
-    localStorage.setItem('flowsight_theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  };
 
   const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
     setToast({ message, type });
@@ -119,7 +96,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface-950 dark:bg-surface-950 light:bg-slate-50 text-slate-100 dark:text-slate-100 light:text-slate-900 transition-colors duration-300 selection:bg-brand-500/30">
+    <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900 selection:bg-indigo-500/20">
       {/* Header Bar */}
       <Header
         onToggleHistory={() => setIsHistoryOpen(!isHistoryOpen)}
@@ -130,25 +107,25 @@ export default function Home() {
       {toast && (
         <div className="fixed top-16 sm:top-20 right-4 sm:right-6 z-40 animate-slide-up max-w-sm sm:max-w-md">
           <div
-            className={`flex items-center space-x-2.5 px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl shadow-2xl backdrop-blur-md border text-xs font-medium ${
+            className={`flex items-center space-x-2.5 px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl shadow-lg border text-xs font-bold ${
               toast.type === 'success'
-                ? 'bg-emerald-950/90 dark:bg-emerald-950/90 light:bg-emerald-50 border-emerald-700/60 dark:border-emerald-700/60 light:border-emerald-300 text-emerald-200 dark:text-emerald-200 light:text-emerald-900'
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
                 : toast.type === 'error'
-                ? 'bg-rose-950/90 dark:bg-rose-950/90 light:bg-rose-50 border-rose-700/60 dark:border-rose-700/60 light:border-rose-300 text-rose-200 dark:text-rose-200 light:text-rose-900'
-                : 'bg-indigo-950/90 dark:bg-indigo-950/90 light:bg-indigo-50 border-indigo-700/60 dark:border-indigo-700/60 light:border-indigo-300 text-indigo-200 dark:text-indigo-200 light:text-indigo-900'
+                ? 'bg-rose-50 border-rose-200 text-rose-900'
+                : 'bg-indigo-50 border-indigo-200 text-indigo-900'
             }`}
           >
             {toast.type === 'success' ? (
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             ) : toast.type === 'error' ? (
-              <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
             ) : (
-              <Info className="w-4 h-4 text-indigo-400 shrink-0" />
+              <Info className="w-4 h-4 text-indigo-600 shrink-0" />
             )}
             <span className="flex-1">{toast.message}</span>
             <button
               onClick={() => setToast(null)}
-              className="p-1 hover:bg-white/10 rounded-lg ml-1 shrink-0"
+              className="p-1 hover:bg-slate-200/50 rounded-lg ml-1 shrink-0"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -174,17 +151,17 @@ export default function Home() {
         <section className="xl:col-span-7 flex flex-col space-y-5 h-full min-h-[500px] xl:h-[calc(100vh-5.5rem)]">
           {/* Error Banner */}
           {errorMessage && (
-            <div className="p-3.5 sm:p-4 rounded-xl bg-rose-950/40 border border-rose-800/50 flex items-start space-x-3 text-rose-200 text-xs shrink-0">
-              <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+            <div className="p-3.5 sm:p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-start space-x-3 text-rose-900 text-xs shrink-0 shadow-2xs">
+              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
               <div className="flex-1">
-                <strong className="block font-semibold mb-0.5">Analysis Issue</strong>
-                <p>{errorMessage}</p>
+                <strong className="block font-bold mb-0.5">Analysis Issue</strong>
+                <p className="font-medium">{errorMessage}</p>
               </div>
               <button
                 onClick={() => setErrorMessage(null)}
-                className="p-1 hover:bg-rose-900/50 rounded shrink-0"
+                className="p-1 hover:bg-rose-100 rounded shrink-0"
               >
-                <X className="w-4 h-4 text-rose-300" />
+                <X className="w-4 h-4 text-rose-600" />
               </button>
             </div>
           )}
