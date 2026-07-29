@@ -84,16 +84,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. API Key verification
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      return NextResponse.json(
-        {
-          error:
-            'GEMINI_API_KEY is not configured. Please set GEMINI_API_KEY in your .env.local file.',
-        },
-        { status: 500 }
-      );
+    // 2. API Key verification & Format Check
+    const apiKey = process.env.GEMINI_API_KEY?.trim();
+    const isValidKeyFormat = apiKey && apiKey.startsWith('AIzaSy') && !apiKey.includes('your_');
+
+    if (!isValidKeyFormat) {
+      console.warn('GEMINI_API_KEY is missing or invalid format. Using FlowSight Static AST Generator.');
+      const fallbackResult = generateStaticAnalysis(code, language);
+      return NextResponse.json(fallbackResult, { status: 200 });
     }
 
     // 3. Gemini Client Initialization
@@ -137,18 +135,6 @@ export async function POST(req: NextRequest) {
           console.warn(`Model '${modelName}' attempt failed: ${err?.message || err}. Trying next candidate...`);
           lastError = err;
         }
-      }
-
-      // If all candidates failed, check if it was due to rate limits
-      const isQuota =
-        lastError?.status === 429 ||
-        lastError?.message?.includes('429') ||
-        lastError?.message?.includes('Quota');
-
-      if (isQuota) {
-        throw new Error(
-          'Gemini API Free Tier rate limit reached. Please wait ~30-45 seconds before clicking analyze again, or get a new free API key from https://aistudio.google.com/.'
-        );
       }
 
       throw lastError || new Error('All Gemini model candidates failed to respond.');
