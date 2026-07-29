@@ -98,18 +98,15 @@ export async function POST(req: NextRequest) {
     // 3. Gemini Client Initialization
     const genAI = new GoogleGenerativeAI(apiKey);
 
-    // List of model candidates to attempt in order of preference and speed
+    // Primary models supported by Google Gemini API
     const MODEL_CANDIDATES = [
       'gemini-2.0-flash',
-      'gemini-1.5-flash-latest',
-      'gemini-1.5-pro',
-      'gemini-pro',
       'gemini-1.5-flash',
     ];
 
     const userPrompt = `Target Language: ${language}\n\nSource Code:\n\`\`\`${language}\n${code}\n\`\`\``;
 
-    // Helper for AI Generation with resilient model fallbacks
+    // Helper for AI Generation with model fallback
     const callGemini = async (extraInstruction?: string) => {
       const fullPrompt = `${SYSTEM_PROMPT}\n\n${userPrompt}${
         extraInstruction ? `\n\nCRITICAL FIX REQUIRED: ${extraInstruction}` : ''
@@ -134,14 +131,14 @@ export async function POST(req: NextRequest) {
           }
           return JSON.parse(responseText) as AnalysisResponse;
         } catch (err: any) {
+          const isQuota = err?.status === 429 || err?.message?.includes('429') || err?.message?.includes('Quota');
+          if (isQuota) {
+            console.warn(`Gemini API Quota/Rate limit reached on '${modelName}'.`);
+            throw new Error('Gemini API Free Tier rate limit reached. Please wait ~30-45 seconds before clicking analyze again, or get a new free API key from https://aistudio.google.com/.');
+          }
+
           console.warn(`Model '${modelName}' call failed (${err?.message || err}). Trying next candidate...`);
           lastError = err;
-          // Allow trying next model candidate on 404 (not found) or 429 (rate limit / quota)
-          const isNotFound = err?.status === 404 || err?.message?.includes('404');
-          const isQuota = err?.status === 429 || err?.message?.includes('429') || err?.message?.includes('Quota');
-          if (!isNotFound && !isQuota) {
-            throw err;
-          }
         }
       }
 
@@ -176,8 +173,8 @@ export async function POST(req: NextRequest) {
     console.error('FlowSight API Error:', error);
     let errorMessage = error?.message || 'An unexpected error occurred during code analysis.';
 
-    if (errorMessage.includes('429') || errorMessage.includes('Quota exceeded')) {
-      errorMessage = 'Gemini API Rate Limit / Quota Exceeded. Please wait 30-45 seconds before clicking analyze again, or generate a fresh key at https://aistudio.google.com/.';
+    if (errorMessage.includes('429') || errorMessage.includes('Quota')) {
+      errorMessage = 'Gemini API Free Tier rate limit reached. Please wait ~30-45 seconds before retrying, or get a new key from https://aistudio.google.com/.';
     }
 
     return NextResponse.json({ error: errorMessage }, { status: 500 });
