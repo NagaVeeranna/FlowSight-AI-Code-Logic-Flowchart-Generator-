@@ -97,28 +97,53 @@ export async function POST(req: NextRequest) {
 
     // 3. Gemini Client Initialization
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash',
-      generationConfig: {
-        responseMimeType: 'application/json',
-        temperature: 0.2,
-      },
-    });
+
+    // List of model candidates to attempt in order of preference and speed
+    const MODEL_CANDIDATES = [
+      'gemini-2.0-flash',
+      'gemini-1.5-flash-latest',
+      'gemini-1.5-pro',
+      'gemini-pro',
+      'gemini-1.5-flash',
+    ];
 
     const userPrompt = `Target Language: ${language}\n\nSource Code:\n\`\`\`${language}\n${code}\n\`\`\``;
 
-    // Helper for AI Generation
+    // Helper for AI Generation with resilient model fallbacks
     const callGemini = async (extraInstruction?: string) => {
       const fullPrompt = `${SYSTEM_PROMPT}\n\n${userPrompt}${
         extraInstruction ? `\n\nCRITICAL FIX REQUIRED: ${extraInstruction}` : ''
       }`;
 
-      const result = await model.generateContent(fullPrompt);
-      const responseText = result.response.text();
-      if (!responseText) {
-        throw new Error('Gemini API returned an empty response.');
+      let lastError: any = null;
+
+      for (const modelName of MODEL_CANDIDATES) {
+        try {
+          const model = genAI.getGenerativeModel({
+            model: modelName,
+            generationConfig: {
+              responseMimeType: 'application/json',
+              temperature: 0.2,
+            },
+          });
+
+          const result = await model.generateContent(fullPrompt);
+          const responseText = result.response.text();
+          if (!responseText) {
+            throw new Error('Gemini API returned an empty response.');
+          }
+          return JSON.parse(responseText) as AnalysisResponse;
+        } catch (err: any) {
+          console.warn(`Model '${modelName}' call failed (${err?.message || err}). Trying next candidate...`);
+          lastError = err;
+          // If it's not a 404 (model not found), break early to avoid unnecessary retries
+          if (err?.status !== 404 && !err?.message?.includes('404')) {
+            throw err;
+          }
+        }
       }
-      return JSON.parse(responseText) as AnalysisResponse;
+
+      throw lastError || new Error('All Gemini model candidates failed to respond.');
     };
 
     // First attempt
