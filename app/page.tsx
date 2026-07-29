@@ -120,12 +120,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-surface-950 dark:bg-surface-950 light:bg-slate-50 text-slate-100 dark:text-slate-100 light:text-slate-900 transition-colors duration-300 selection:bg-brand-500/30">
-      {/* Header Bar with Dark/Light Toggle */}
+      {/* Header Bar */}
       <Header
         onToggleHistory={() => setIsHistoryOpen(!isHistoryOpen)}
         historyCount={historyItems.length}
-        theme={theme}
-        onToggleTheme={toggleTheme}
       />
 
       {/* Toast Notification Banner */}
@@ -169,7 +167,6 @@ export default function Home() {
             onChangeLanguage={setLanguage}
             onAnalyze={handleAnalyze}
             isLoading={isLoading}
-            theme={theme}
           />
         </section>
 
@@ -177,7 +174,7 @@ export default function Home() {
         <section className="xl:col-span-7 flex flex-col space-y-5 h-full min-h-[500px] xl:h-[calc(100vh-5.5rem)]">
           {/* Error Banner */}
           {errorMessage && (
-            <div className="p-3.5 sm:p-4 rounded-xl bg-rose-950/40 dark:bg-rose-950/40 light:bg-rose-50 border border-rose-800/50 dark:border-rose-800/50 light:border-rose-300 flex items-start space-x-3 text-rose-200 dark:text-rose-200 light:text-rose-900 text-xs shrink-0">
+            <div className="p-3.5 sm:p-4 rounded-xl bg-rose-950/40 border border-rose-800/50 flex items-start space-x-3 text-rose-200 text-xs shrink-0">
               <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
               <div className="flex-1">
                 <strong className="block font-semibold mb-0.5">Analysis Issue</strong>
@@ -198,7 +195,6 @@ export default function Home() {
               mermaidCode={analysisResult?.mermaidCode || null}
               isLoading={isLoading}
               onCopyMermaid={() => showToast('Mermaid code copied to clipboard!', 'success')}
-              theme={theme}
             />
           </div>
 
