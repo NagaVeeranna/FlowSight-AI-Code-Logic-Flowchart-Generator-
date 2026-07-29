@@ -8,13 +8,26 @@
     --foreground: 210 40% 98%;
   }
 
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+  }
+
   body {
-    @apply bg-surface-950 text-slate-100 antialiased font-sans min-h-screen selection:bg-brand-500/30 selection:text-brand-100;
+    @apply bg-surface-950 text-slate-100 antialiased font-sans min-h-screen transition-colors duration-300 selection:bg-brand-500/30 selection:text-brand-100;
     background-image: 
       radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
       radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.08) 0px, transparent 50%),
       radial-gradient(at 50% 100%, rgba(168, 85, 247, 0.05) 0px, transparent 50%);
     background-attachment: fixed;
+  }
+
+  .light body {
+    @apply bg-slate-50 text-slate-900 selection:bg-brand-500/20 selection:text-brand-900;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.05) 0px, transparent 50%),
+      radial-gradient(at 50% 100%, rgba(168, 85, 247, 0.03) 0px, transparent 50%);
   }
 }
 
@@ -28,9 +41,17 @@
   background: rgba(15, 23, 42, 0.6);
 }
 
+.light ::-webkit-scrollbar-track {
+  background: rgba(241, 245, 249, 0.8);
+}
+
 ::-webkit-scrollbar-thumb {
   background: rgba(51, 65, 85, 0.6);
   border-radius: 4px;
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: rgba(203, 213, 225, 0.8);
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -39,18 +60,30 @@
 
 /* Glassmorphism Classes */
 .glass-panel {
-  @apply bg-surface-900/75 backdrop-blur-md border border-slate-800/80 shadow-glass-sm rounded-xl;
+  @apply bg-surface-900/75 backdrop-blur-md border border-slate-800/80 shadow-glass-sm rounded-xl transition-colors duration-300;
+}
+
+.light .glass-panel {
+  @apply bg-white/80 backdrop-blur-md border border-slate-200/90 shadow-sm rounded-xl;
 }
 
 .glass-panel-interactive {
   @apply glass-panel transition-all duration-200 hover:border-slate-700 hover:shadow-glass-lg;
 }
 
-.glass-pill {
-  @apply bg-slate-800/60 backdrop-blur-sm border border-slate-700/60 rounded-full px-3 py-1 text-xs font-medium text-slate-300;
+.light .glass-panel-interactive {
+  @apply hover:border-slate-300 hover:shadow-md;
 }
 
-/* Mermaid SVG overrides for sleek dark mode */
+.glass-pill {
+  @apply bg-slate-800/60 backdrop-blur-sm border border-slate-700/60 rounded-full px-3 py-1 text-xs font-medium text-slate-300 transition-colors duration-300;
+}
+
+.light .glass-pill {
+  @apply bg-slate-100/90 border border-slate-200 text-slate-700;
+}
+
+/* Mermaid SVG overrides for sleek dark/light mode */
 .mermaid svg {
   max-width: 100% !important;
   height: auto !important;
@@ -68,9 +101,22 @@
   ry: 8px !important;
 }
 
+.light .mermaid .node rect,
+.light .mermaid .node circle,
+.light .mermaid .node polygon,
+.light .mermaid .node path {
+  fill: #ffffff !important;
+  stroke: #4f46e5 !important;
+  stroke-width: 2px !important;
+}
+
 .mermaid .edgePath .path {
   stroke: #38bdf8 !important;
   stroke-width: 2px !important;
+}
+
+.light .mermaid .edgePath .path {
+  stroke: #0284c7 !important;
 }
 
 .mermaid .marker {
@@ -78,7 +124,16 @@
   stroke: #38bdf8 !important;
 }
 
+.light .mermaid .marker {
+  fill: #0284c7 !important;
+  stroke: #0284c7 !important;
+}
+
 .mermaid .label {
   color: #f8fafc !important;
   font-weight: 500 !important;
+}
+
+.light .mermaid .label {
+  color: #0f172a !important;
 }

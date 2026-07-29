@@ -9,8 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@google/generative-ai": "^0.24.0",
     "@monaco-editor/react": "^4.7.0",
+    "@mui/material": "^6.4.1",
     "clsx": "^2.1.1",
     "html-to-image": "^1.11.11",
     "lucide-react": "^0.469.0",

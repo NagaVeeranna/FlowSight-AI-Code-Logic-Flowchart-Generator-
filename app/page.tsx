@@ -23,15 +23,38 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
+  // Theme Management (Dark / Light)
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+
   // History Drawer State
   const [historyItems, setHistoryItems] = useState<HistoryItem[]>([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState<boolean>(false);
 
-  // Load history on mount
+  // Load saved theme & history on mount
   useEffect(() => {
-    const saved = HistoryStorage.getAll();
-    setHistoryItems(saved);
+    const savedHistory = HistoryStorage.getAll();
+    setHistoryItems(savedHistory);
+
+    const savedTheme = (localStorage.getItem('flowsight_theme') as 'dark' | 'light') || 'dark';
+    setTheme(savedTheme);
   }, []);
+
+  // Update HTML root class whenever theme changes
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    } else {
+      root.classList.add('light');
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('flowsight_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
     setToast({ message, type });
@@ -96,11 +119,13 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface-950 text-slate-100 selection:bg-brand-500/30">
-      {/* Header Bar */}
+    <div className="min-h-screen flex flex-col bg-surface-950 dark:bg-surface-950 light:bg-slate-50 text-slate-100 dark:text-slate-100 light:text-slate-900 transition-colors duration-300 selection:bg-brand-500/30">
+      {/* Header Bar with Dark/Light Toggle */}
       <Header
         onToggleHistory={() => setIsHistoryOpen(!isHistoryOpen)}
         historyCount={historyItems.length}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
 
       {/* Toast Notification Banner */}
@@ -109,10 +134,10 @@ export default function Home() {
           <div
             className={`flex items-center space-x-2.5 px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl shadow-2xl backdrop-blur-md border text-xs font-medium ${
               toast.type === 'success'
-                ? 'bg-emerald-950/90 border-emerald-700/60 text-emerald-200'
+                ? 'bg-emerald-950/90 dark:bg-emerald-950/90 light:bg-emerald-50 border-emerald-700/60 dark:border-emerald-700/60 light:border-emerald-300 text-emerald-200 dark:text-emerald-200 light:text-emerald-900'
                 : toast.type === 'error'
-                ? 'bg-rose-950/90 border-rose-700/60 text-rose-200'
-                : 'bg-indigo-950/90 border-indigo-700/60 text-indigo-200'
+                ? 'bg-rose-950/90 dark:bg-rose-950/90 light:bg-rose-50 border-rose-700/60 dark:border-rose-700/60 light:border-rose-300 text-rose-200 dark:text-rose-200 light:text-rose-900'
+                : 'bg-indigo-950/90 dark:bg-indigo-950/90 light:bg-indigo-50 border-indigo-700/60 dark:border-indigo-700/60 light:border-indigo-300 text-indigo-200 dark:text-indigo-200 light:text-indigo-900'
             }`}
           >
             {toast.type === 'success' ? (
@@ -144,6 +169,7 @@ export default function Home() {
             onChangeLanguage={setLanguage}
             onAnalyze={handleAnalyze}
             isLoading={isLoading}
+            theme={theme}
           />
         </section>
 
@@ -151,7 +177,7 @@ export default function Home() {
         <section className="xl:col-span-7 flex flex-col space-y-5 h-full min-h-[500px] xl:h-[calc(100vh-5.5rem)]">
           {/* Error Banner */}
           {errorMessage && (
-            <div className="p-3.5 sm:p-4 rounded-xl bg-rose-950/40 border border-rose-800/50 flex items-start space-x-3 text-rose-200 text-xs shrink-0">
+            <div className="p-3.5 sm:p-4 rounded-xl bg-rose-950/40 dark:bg-rose-950/40 light:bg-rose-50 border border-rose-800/50 dark:border-rose-800/50 light:border-rose-300 flex items-start space-x-3 text-rose-200 dark:text-rose-200 light:text-rose-900 text-xs shrink-0">
               <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
               <div className="flex-1">
                 <strong className="block font-semibold mb-0.5">Analysis Issue</strong>
@@ -172,6 +198,7 @@ export default function Home() {
               mermaidCode={analysisResult?.mermaidCode || null}
               isLoading={isLoading}
               onCopyMermaid={() => showToast('Mermaid code copied to clipboard!', 'success')}
+              theme={theme}
             />
           </div>
 
