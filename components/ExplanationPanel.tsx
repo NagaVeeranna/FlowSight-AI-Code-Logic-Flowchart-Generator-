@@ -17,6 +17,11 @@ import {
   Lightbulb,
   Gauge,
   Layers,
+  Award,
+  Binary,
+  Database,
+  Lock,
+  Bug,
 } from 'lucide-react';
 import { Tooltip, Chip } from '@mui/material';
 
@@ -31,25 +36,25 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
   explanation,
   isLoading,
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'stepByStep' | 'variables' | 'flow' | 'concepts' | 'risks'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'stepByStep' | 'analysis' | 'variables' | 'flow' | 'security'>('overview');
   const [copied, setCopied] = useState(false);
 
   if (isLoading) {
     return (
-      <div className="glass-panel flex flex-col h-full border border-slate-200/90 rounded-2xl p-6 items-center justify-center space-y-3">
+      <div className="glass-panel flex flex-col h-full border border-slate-200 rounded-2xl p-6 items-center justify-center space-y-3">
         <div className="w-8 h-8 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
-        <p className="text-xs text-indigo-700 font-bold animate-pulse">Analyzing AST, design patterns & metrics...</p>
+        <p className="text-xs text-indigo-700 font-extrabold animate-pulse">Running evidence-based static analysis...</p>
       </div>
     );
   }
 
   if (!explanation) {
     return (
-      <div className="glass-panel flex flex-col h-full border border-slate-200/90 rounded-2xl p-6 sm:p-8 items-center justify-center text-center space-y-3 text-slate-400">
+      <div className="glass-panel flex flex-col h-full border border-slate-200 rounded-2xl p-6 sm:p-8 items-center justify-center text-center space-y-3 text-slate-400">
         <BookOpen className="w-10 h-10 sm:w-12 sm:h-12 text-slate-300 stroke-1" />
-        <h3 className="text-xs sm:text-sm font-bold text-slate-700">No Enterprise Analysis Ready</h3>
+        <h3 className="text-xs sm:text-sm font-bold text-slate-700">No Analysis Generated Yet</h3>
         <p className="text-[11px] sm:text-xs max-w-xs text-slate-500">
-          AST logic breakdown, concepts, metrics, and design patterns will appear here after analysis.
+          Paste source code and click &quot;Generate Flowchart & Logic&quot; to run dynamic evidence-based analysis.
         </p>
       </div>
     );
@@ -63,25 +68,37 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
   };
 
   return (
-    <div className="glass-panel flex flex-col h-full w-full border border-slate-200/90 rounded-2xl overflow-hidden shadow-2xs transition-all duration-300">
+    <div className="glass-panel flex flex-col h-full w-full border border-slate-200 rounded-2xl overflow-hidden shadow-2xs transition-all duration-300">
       {/* Top Header & Horizontal Scrollable Tabs */}
-      <div className="bg-slate-100/90 border-b border-slate-200/90 px-3 sm:px-4 py-2 flex items-center justify-between gap-2 overflow-hidden">
+      <div className="bg-slate-100/90 border-b border-slate-200 px-3 sm:px-4 py-2 flex items-center justify-between gap-2 overflow-hidden">
         <div className="flex items-center space-x-2 overflow-x-auto py-1 scrollbar-none max-w-full">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center space-x-1.5 ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all shrink-0 flex items-center space-x-1.5 ${
               activeTab === 'overview'
                 ? 'bg-indigo-600 text-white shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
             }`}
           >
             <BookOpen className="w-3.5 h-3.5" />
-            <span>Overview</span>
+            <span>Overview & Quality</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('analysis')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all shrink-0 flex items-center space-x-1.5 ${
+              activeTab === 'analysis'
+                ? 'bg-indigo-600 text-white shadow-2xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
+            }`}
+          >
+            <Cpu className="w-3.5 h-3.5 text-indigo-200" />
+            <span>Algorithms & OOP</span>
           </button>
 
           <button
             onClick={() => setActiveTab('stepByStep')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center space-x-1.5 ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all shrink-0 flex items-center space-x-1.5 ${
               activeTab === 'stepByStep'
                 ? 'bg-indigo-600 text-white shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
@@ -92,20 +109,8 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
           </button>
 
           <button
-            onClick={() => setActiveTab('concepts')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center space-x-1.5 ${
-              activeTab === 'concepts'
-                ? 'bg-indigo-600 text-white shadow-2xs'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
-            }`}
-          >
-            <Cpu className="w-3.5 h-3.5 text-indigo-200" />
-            <span>Concepts & Patterns</span>
-          </button>
-
-          <button
             onClick={() => setActiveTab('variables')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center space-x-1.5 ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all shrink-0 flex items-center space-x-1.5 ${
               activeTab === 'variables'
                 ? 'bg-indigo-600 text-white shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
@@ -117,7 +122,7 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
 
           <button
             onClick={() => setActiveTab('flow')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center space-x-1.5 ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all shrink-0 flex items-center space-x-1.5 ${
               activeTab === 'flow'
                 ? 'bg-indigo-600 text-white shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
@@ -128,15 +133,15 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
           </button>
 
           <button
-            onClick={() => setActiveTab('risks')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center space-x-1.5 ${
-              activeTab === 'risks'
+            onClick={() => setActiveTab('security')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all shrink-0 flex items-center space-x-1.5 ${
+              activeTab === 'security'
                 ? 'bg-indigo-600 text-white shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
             }`}
           >
             <ShieldAlert className="w-3.5 h-3.5 text-rose-500" />
-            <span>Risks & Advice</span>
+            <span>Security & Audit</span>
           </button>
         </div>
 
@@ -152,17 +157,58 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
 
       {/* Tab Content Container */}
       <div className="flex-1 p-4 sm:p-5 overflow-y-auto max-h-[420px] lg:max-h-none text-xs text-slate-700 space-y-4 bg-white">
-        {/* Tab 1: Overview & Metrics */}
+        {/* Tab 1: Overview & Quality Scorecard */}
         {activeTab === 'overview' && (
           <div className="space-y-4 animate-fade-in">
-            {summary && (
-              <div className="p-3.5 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-900 font-bold leading-relaxed shadow-2xs">
-                {summary}
+            {/* Top Project Type & Summary */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-3.5 rounded-2xl bg-indigo-50 border border-indigo-200 shadow-2xs">
+              <div>
+                {explanation.projectType && (
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-600 text-white mr-2">
+                    {explanation.projectType}
+                  </span>
+                )}
+                <span className="text-xs font-bold text-indigo-900 leading-relaxed">
+                  {summary}
+                </span>
+              </div>
+            </div>
+
+            {/* Quality Scorecard (0 - 100) */}
+            {explanation.ratings && (
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 shadow-2xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2 text-indigo-900 font-extrabold text-xs">
+                    <Award className="w-4 h-4 text-indigo-600" />
+                    <span>AI Code Quality Scorecard</span>
+                  </div>
+                  <span className="px-3 py-1 rounded-xl bg-indigo-600 text-white font-extrabold text-xs">
+                    {explanation.ratings.overallScore} / 100
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center pt-1">
+                  <div className="p-2 rounded-xl bg-white border border-slate-200">
+                    <span className="text-[10px] text-slate-500 block font-bold">Maintainability</span>
+                    <strong className="text-indigo-700 text-sm font-extrabold">Grade {explanation.ratings.maintainabilityRating}</strong>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white border border-slate-200">
+                    <span className="text-[10px] text-slate-500 block font-bold">Readability</span>
+                    <strong className="text-cyan-700 text-sm font-extrabold">Grade {explanation.ratings.readabilityRating}</strong>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white border border-slate-200">
+                    <span className="text-[10px] text-slate-500 block font-bold">Performance</span>
+                    <strong className="text-emerald-700 text-sm font-extrabold">Grade {explanation.ratings.performanceRating}</strong>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white border border-slate-200">
+                    <span className="text-[10px] text-slate-500 block font-bold">Reliability</span>
+                    <strong className="text-purple-700 text-sm font-extrabold">Grade {explanation.ratings.reliabilityRating}</strong>
+                  </div>
+                </div>
               </div>
             )}
 
             <div>
-              <h4 className="text-xs font-bold text-indigo-800 uppercase tracking-wider mb-1.5">
+              <h4 className="text-xs font-extrabold text-indigo-900 uppercase tracking-wider mb-1.5">
                 Program Overview
               </h4>
               <p className="leading-relaxed text-slate-700 font-medium">{explanation.overview}</p>
@@ -171,69 +217,38 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
             {/* Code Metrics Grid */}
             {explanation.metrics && (
               <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 shadow-2xs">
-                <div className="flex items-center space-x-2 text-indigo-800 font-bold text-xs">
+                <div className="flex items-center space-x-2 text-indigo-900 font-extrabold text-xs">
                   <Gauge className="w-4 h-4 text-indigo-600" />
-                  <span>Enterprise Code Metrics</span>
+                  <span>Calculated Code Metrics</span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 pt-1 text-center">
                   <div className="p-2 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                    <span className="text-[10px] text-slate-500 block font-semibold">LOC</span>
+                    <span className="text-[10px] text-slate-500 block font-bold">LOC</span>
                     <strong className="text-indigo-700 text-xs font-mono">{explanation.metrics.linesOfCode}</strong>
                   </div>
                   <div className="p-2 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                    <span className="text-[10px] text-slate-500 block font-semibold">Functions</span>
+                    <span className="text-[10px] text-slate-500 block font-bold">Functions</span>
                     <strong className="text-indigo-700 text-xs font-mono">{explanation.metrics.functions}</strong>
                   </div>
                   <div className="p-2 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                    <span className="text-[10px] text-slate-500 block font-semibold">Loops</span>
+                    <span className="text-[10px] text-slate-500 block font-bold">Loops</span>
                     <strong className="text-purple-700 text-xs font-mono">{explanation.metrics.loops}</strong>
                   </div>
                   <div className="p-2 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                    <span className="text-[10px] text-slate-500 block font-semibold">Conditions</span>
+                    <span className="text-[10px] text-slate-500 block font-bold">Conditions</span>
                     <strong className="text-amber-700 text-xs font-mono">{explanation.metrics.conditions}</strong>
                   </div>
                   <div className="p-2 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                    <span className="text-[10px] text-slate-500 block font-semibold">Complexity</span>
+                    <span className="text-[10px] text-slate-500 block font-bold">Complexity</span>
                     <strong className="text-emerald-700 text-xs">{explanation.metrics.complexityScore}</strong>
                   </div>
                   <div className="p-2 rounded-xl bg-white border border-slate-200 shadow-2xs">
-                    <span className="text-[10px] text-slate-500 block font-semibold">Maintainability</span>
-                    <strong className="text-cyan-700 text-xs">{explanation.metrics.maintainability}</strong>
+                    <span className="text-[10px] text-slate-500 block font-bold">Nesting</span>
+                    <strong className="text-cyan-700 text-xs">{explanation.metrics.nestingDepth || 1} Lvl</strong>
                   </div>
                 </div>
               </div>
             )}
-
-            {/* Classes & Methods */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {explanation.classes && explanation.classes.length > 0 && (
-                <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-1.5">
-                  <span className="text-[11px] font-bold text-slate-600 flex items-center space-x-1.5">
-                    <Boxes className="w-3.5 h-3.5 text-indigo-600" />
-                    <span>Classes & Structs</span>
-                  </span>
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {explanation.classes.map((cls, idx) => (
-                      <Chip key={idx} label={cls} size="small" variant="outlined" />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {explanation.methods && explanation.methods.length > 0 && (
-                <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-1.5">
-                  <span className="text-[11px] font-bold text-slate-600 flex items-center space-x-1.5">
-                    <Code2 className="w-3.5 h-3.5 text-indigo-600" />
-                    <span>Methods & Functions</span>
-                  </span>
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {explanation.methods.map((mth, idx) => (
-                      <Chip key={idx} label={mth} size="small" variant="outlined" />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
 
             {/* Complexity Badges */}
             <div className="flex flex-wrap items-center gap-3 pt-1">
@@ -249,23 +264,63 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
           </div>
         )}
 
-        {/* Tab 2: Concepts & Design Patterns */}
-        {activeTab === 'concepts' && (
+        {/* Tab 2: Algorithms, Data Structures & OOP (Truthful Evidence-Based) */}
+        {activeTab === 'analysis' && (
           <div className="space-y-4 animate-fade-in">
-            {/* Programming Concepts */}
-            {explanation.concepts && explanation.concepts.length > 0 && (
+            {/* Detected Algorithms */}
+            {explanation.detectedAlgorithms && explanation.detectedAlgorithms.length > 0 && (
               <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-2">
-                <h4 className="text-xs font-bold text-indigo-800 uppercase tracking-wider flex items-center space-x-2">
-                  <Cpu className="w-4 h-4 text-indigo-600" />
-                  <span>Detected Programming Concepts</span>
+                <h4 className="text-xs font-extrabold text-indigo-900 uppercase tracking-wider flex items-center space-x-2">
+                  <Binary className="w-4 h-4 text-indigo-600" />
+                  <span>Detected Algorithms</span>
                 </h4>
                 <div className="flex flex-wrap gap-2 pt-1">
-                  {explanation.concepts.map((concept, idx) => (
+                  {explanation.detectedAlgorithms.map((algo, idx) => (
                     <span
                       key={idx}
-                      className="px-3 py-1 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs font-bold"
+                      className="px-3 py-1 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs font-extrabold"
                     >
-                      {concept}
+                      {algo}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Detected Data Structures */}
+            {explanation.detectedDataStructures && explanation.detectedDataStructures.length > 0 && (
+              <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-2">
+                <h4 className="text-xs font-extrabold text-cyan-900 uppercase tracking-wider flex items-center space-x-2">
+                  <Database className="w-4 h-4 text-cyan-600" />
+                  <span>Detected Data Structures</span>
+                </h4>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {explanation.detectedDataStructures.map((ds, idx) => (
+                    <span
+                      key={idx}
+                      className="px-3 py-1 rounded-xl bg-cyan-50 border border-cyan-200 text-cyan-900 text-xs font-extrabold"
+                    >
+                      {ds}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* OOP Concepts */}
+            {explanation.oopConcepts && explanation.oopConcepts.length > 0 && (
+              <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-2">
+                <h4 className="text-xs font-extrabold text-purple-900 uppercase tracking-wider flex items-center space-x-2">
+                  <Boxes className="w-4 h-4 text-purple-600" />
+                  <span>Object-Oriented Concepts</span>
+                </h4>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {explanation.oopConcepts.map((oop, idx) => (
+                    <span
+                      key={idx}
+                      className="px-3 py-1 rounded-xl bg-purple-50 border border-purple-200 text-purple-900 text-xs font-extrabold"
+                    >
+                      {oop}
                     </span>
                   ))}
                 </div>
@@ -275,15 +330,15 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
             {/* Design Patterns */}
             {explanation.designPatterns && explanation.designPatterns.length > 0 && (
               <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-2">
-                <h4 className="text-xs font-bold text-purple-800 uppercase tracking-wider flex items-center space-x-2">
-                  <Layers className="w-4 h-4 text-purple-600" />
-                  <span>Enterprise Design Patterns</span>
+                <h4 className="text-xs font-extrabold text-emerald-900 uppercase tracking-wider flex items-center space-x-2">
+                  <Layers className="w-4 h-4 text-emerald-600" />
+                  <span>Verified Design Patterns</span>
                 </h4>
                 <div className="flex flex-wrap gap-2 pt-1">
                   {explanation.designPatterns.map((pattern, idx) => (
                     <span
                       key={idx}
-                      className="px-3 py-1 rounded-xl bg-purple-50 border border-purple-200 text-purple-900 text-xs font-bold"
+                      className="px-3 py-1 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-extrabold"
                     >
                       {pattern}
                     </span>
@@ -357,21 +412,39 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
           </div>
         )}
 
-        {/* Tab 6: Risks & Recommendations */}
-        {activeTab === 'risks' && (
+        {/* Tab 6: Security & Code Smells Audit */}
+        {activeTab === 'security' && (
           <div className="space-y-4 animate-fade-in">
-            {/* Risk Issues */}
-            {explanation.possibleIssues && explanation.possibleIssues.length > 0 && (
-              <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 space-y-2 shadow-2xs">
-                <h4 className="text-xs font-bold text-rose-900 uppercase tracking-wider flex items-center space-x-2">
-                  <ShieldAlert className="w-4 h-4 text-rose-600" />
-                  <span>Identified Risk Factors</span>
+            {/* Security Audit */}
+            {explanation.securityAnalysis && explanation.securityAnalysis.length > 0 && (
+              <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-2 shadow-2xs">
+                <h4 className="text-xs font-extrabold text-amber-900 uppercase tracking-wider flex items-center space-x-2">
+                  <Lock className="w-4 h-4 text-amber-600" />
+                  <span>Security Audit & Vulnerabilities</span>
                 </h4>
                 <div className="space-y-1.5 pt-1">
-                  {explanation.possibleIssues.map((issue, idx) => (
+                  {explanation.securityAnalysis.map((sec, idx) => (
+                    <div key={idx} className="flex items-start space-x-2 text-amber-900 text-xs font-medium">
+                      <span className="text-amber-600 font-bold">•</span>
+                      <span>{sec}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Code Smells */}
+            {explanation.codeSmells && explanation.codeSmells.length > 0 && (
+              <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 space-y-2 shadow-2xs">
+                <h4 className="text-xs font-extrabold text-rose-900 uppercase tracking-wider flex items-center space-x-2">
+                  <Bug className="w-4 h-4 text-rose-600" />
+                  <span>Detected Code Smells</span>
+                </h4>
+                <div className="space-y-1.5 pt-1">
+                  {explanation.codeSmells.map((smell, idx) => (
                     <div key={idx} className="flex items-start space-x-2 text-rose-900 text-xs font-medium">
                       <span className="text-rose-600 font-bold">•</span>
-                      <span>{issue}</span>
+                      <span>{smell}</span>
                     </div>
                   ))}
                 </div>
@@ -381,7 +454,7 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
             {/* Recommendations */}
             {explanation.recommendations && explanation.recommendations.length > 0 && (
               <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-2 shadow-2xs">
-                <h4 className="text-xs font-bold text-emerald-900 uppercase tracking-wider flex items-center space-x-2">
+                <h4 className="text-xs font-extrabold text-emerald-900 uppercase tracking-wider flex items-center space-x-2">
                   <Lightbulb className="w-4 h-4 text-emerald-600" />
                   <span>Refactoring Recommendations</span>
                 </h4>
@@ -395,30 +468,6 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
                 </div>
               </div>
             )}
-
-            {/* Edge Cases */}
-            {explanation.edgeCases?.map((ec, idx) => (
-              <div
-                key={idx}
-                className="p-3.5 rounded-2xl bg-white border border-slate-200 space-y-1.5 shadow-2xs"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-slate-800 text-xs">{ec.scenario}</span>
-                  <span
-                    className={`glass-pill text-[10px] font-bold ${
-                      ec.riskLevel === 'high'
-                        ? 'text-rose-800 border-rose-200 bg-rose-50'
-                        : ec.riskLevel === 'medium'
-                        ? 'text-amber-800 border-amber-200 bg-amber-50'
-                        : 'text-emerald-800 border-emerald-200 bg-emerald-50'
-                    }`}
-                  >
-                    {ec.riskLevel?.toUpperCase()} RISK
-                  </span>
-                </div>
-                <p className="text-slate-700 text-xs font-medium">{ec.behavior}</p>
-              </div>
-            ))}
           </div>
         )}
       </div>

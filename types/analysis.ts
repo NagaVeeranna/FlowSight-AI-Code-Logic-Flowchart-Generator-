@@ -27,6 +27,16 @@ export interface CodeMetrics {
   conditions: number;
   complexityScore: string;
   maintainability: string;
+  nestingDepth?: number;
+  commentsCount?: number;
+}
+
+export interface QualityRatings {
+  overallScore: number; // 0 to 100
+  maintainabilityRating: 'A' | 'B' | 'C' | 'D' | 'F';
+  readabilityRating: 'A' | 'B' | 'C' | 'D' | 'F';
+  performanceRating: 'A' | 'B' | 'C' | 'D' | 'F';
+  reliabilityRating: 'A' | 'B' | 'C' | 'D' | 'F';
 }
 
 export interface TimeComplexityDetail {
@@ -36,11 +46,15 @@ export interface TimeComplexityDetail {
 }
 
 export interface DetailedExplanation {
+  projectType?: string;
   overview: string;
   inputs: string;
   outputs: string;
   classes?: string[];
   methods?: string[];
+  oopConcepts?: string[];
+  detectedAlgorithms?: string[];
+  detectedDataStructures?: string[];
   lineByLine: {
     lineRange: string;
     codeSnippet: string;
@@ -51,9 +65,12 @@ export interface DetailedExplanation {
   edgeCases: EdgeCaseInfo[];
   concepts?: string[];
   designPatterns?: string[];
+  securityAnalysis?: string[];
+  codeSmells?: string[];
   possibleIssues?: string[];
   recommendations?: string[];
   metrics?: CodeMetrics;
+  ratings?: QualityRatings;
   timeComplexity: string;
   timeComplexityDetail?: TimeComplexityDetail;
   spaceComplexity: string;
