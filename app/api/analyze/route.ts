@@ -136,8 +136,10 @@ export async function POST(req: NextRequest) {
         } catch (err: any) {
           console.warn(`Model '${modelName}' call failed (${err?.message || err}). Trying next candidate...`);
           lastError = err;
-          // If it's not a 404 (model not found), break early to avoid unnecessary retries
-          if (err?.status !== 404 && !err?.message?.includes('404')) {
+          // Allow trying next model candidate on 404 (not found) or 429 (rate limit / quota)
+          const isNotFound = err?.status === 404 || err?.message?.includes('404');
+          const isQuota = err?.status === 429 || err?.message?.includes('429') || err?.message?.includes('Quota');
+          if (!isNotFound && !isQuota) {
             throw err;
           }
         }
@@ -172,7 +174,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(analysisResult, { status: 200 });
   } catch (error: any) {
     console.error('FlowSight API Error:', error);
-    const errorMessage = error?.message || 'An unexpected error occurred during code analysis.';
+    let errorMessage = error?.message || 'An unexpected error occurred during code analysis.';
+
+    if (errorMessage.includes('429') || errorMessage.includes('Quota exceeded')) {
+      errorMessage = 'Gemini API Rate Limit / Quota Exceeded. Please wait 30-45 seconds before clicking analyze again, or generate a fresh key at https://aistudio.google.com/.';
+    }
+
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
