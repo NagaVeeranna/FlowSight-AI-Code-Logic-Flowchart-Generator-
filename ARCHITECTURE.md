@@ -1,49 +1,64 @@
-# FlowSight – System Architecture & Design Documentation
+# FlowSight – System Architecture & Design Rationale
 
-FlowSight is engineered following **Clean Architecture** principles and Next.js App Router best practices, decoupling the frontend state management, code editing engine, diagram rendering layer, and AI processing pipeline.
+FlowSight is built using **Clean Architecture** principles to separate client UI presentation, diagram rendering engines, AI inference API routes, and local static AST fallback parsing.
 
 ---
 
-## 🏛️ System Architecture Diagram
+## 🏛 System Architecture Overview
 
 ```mermaid
 graph TD
-    User([User / Web Client]) -->|1. Paste Code & Choose Language| Editor[Monaco Code Editor]
-    Editor -->|2. Trigger Analysis| APIRoute[Next.js API Route: /api/analyze]
+    User["User / Student / Developer"] --> UI["Next.js 14 Client Dashboard"]
     
-    subgraph Server Processing Pipeline
-        APIRoute -->|3. Validate Code & Language| Validator[Input & Length Checker]
-        Validator -->|4. Send Prompt with JSON Schema| Gemini[Google Gemini API]
-        Gemini -->|5. Return Structured JSON| SyntaxCheck[Mermaid Syntax Checker]
-        SyntaxCheck -->|6a. Invalid Syntax? Retry Prompt| Gemini
-        SyntaxCheck -->|6b. Valid Syntax| CleanedJSON[Validated Analysis Payload]
+    subgraph Client Layer
+        UI --> Monaco["Monaco Code Editor Workspace"]
+        UI --> Viewer["Interactive Mermaid Flowchart Canvas"]
+        UI --> Panel["Tabbed Evidence & Quality Panel"]
+        UI --> History["LocalStorage Session History"]
     end
-
-    CleanedJSON -->|7. HTTP 200 Response| ClientState[React Workspace State]
-    ClientState -->|Render SVG| FlowchartView[Interactive Mermaid Viewer]
-    ClientState -->|Render Breakdown| ExplanationView[Tabbed Explanation Panel]
-    ClientState -->|Persist Record| LocalStorage[(Browser LocalStorage)]
+    
+    subgraph Serverless API Layer
+        UI --> API["POST /api/analyze Serverless Endpoint"]
+        API --> KeyCheck{"Valid GEMINI_API_KEY?"}
+        KeyCheck -->|Yes| GeminiSDK["Google Gemini API (gemini-2.0-flash / 1.5-flash)"]
+        KeyCheck -->|No / Quota 429| ASTFallback["FlowSight Static AST Generator Engine"]
+        GeminiSDK --> Validator["Mermaid Syntax Sanitizer & Validator"]
+        Validator -->|Valid| Response["HTTP 200 Analysis Response"]
+        Validator -->|Invalid Syntax| RetryLoop["Automatic AI Retry Loop"]
+        RetryLoop --> Response
+        ASTFallback --> Response
+    end
 ```
 
 ---
 
-## 🔑 Core Design Decisions
+## 🧩 Architectural Layers & Component Responsibilities
 
-### 1. Monaco Editor Integration
-* **Why**: Provides a native IDE experience with automatic language-specific token highlighting, auto-indentation, line numbering, and file drag-and-drop support.
-* **Implementation**: Uses `@monaco-editor/react` with dynamic language mode mapping (`python`, `javascript`, `java`, `cpp`, `c`).
+### 1. Presentation & UI Layer (`components/`)
+* **`Header.tsx`**: Top navigation navbar featuring high-contrast branding, status indicators, and History drawer trigger.
+* **`CodeEditor.tsx`**: IDE-grade source code editor powered by `@monaco-editor/react`. Handles language mode switching (`python`, `javascript`, `java`, `cpp`, `c`), file uploads, line/character counters, and sample algorithm loading.
+* **`FlowchartViewer.tsx`**: SVG diagram viewport powered by `mermaid` and `react-zoom-pan-pinch`. Supports vector zoom/pan/reset, **Top-Down (TD)** vs **Left-to-Right (LR)** layout toggling, raw Mermaid copy, and **SVG/PNG downloads**.
+* **`ExplanationPanel.tsx`**: Tabbed presentation component rendering Overview, AI Quality Scorecard (0–100), Code Metrics, Detected Algorithms & OOP Concepts, Variables, Control Flow, and Security Audit.
+* **`HistorySidebar.tsx`**: Drawer for client-side analysis persistence with real-time keyword search and filtering.
 
-### 2. Interactive Mermaid Diagram Viewer with Vector Pan & Zoom
-* **Why**: Raw SVG diagrams can get wide or tall for complex algorithms. Providing zoom in/out, panning, reset, and full-screen controls ensures high usability.
-* **Implementation**: Combines `mermaid.render()` with `react-zoom-pan-pinch` wrapper for fluid CSS transform controls.
+### 2. Serverless API & AI Layer (`app/api/analyze/route.ts`)
+* Implements system prompt engineering enforcing **evidence-based dynamic analysis** (no false or guessed features).
+* Manages multi-model candidate retry loop (`gemini-2.0-flash`, `gemini-1.5-flash`).
+* Automatically catches API quota limits (`429`) or missing keys and seamlessly delegates to the local static AST fallback generator.
 
-### 3. Serverless Gemini API Route with Automatic Retry Loop
-* **Why**: LLMs occasionally produce invalid Mermaid flowchart syntax (unquoted special characters or unclosed brackets). To prevent client-side diagram crashes, the server validates the output before returning it to the user.
-* **Implementation**:
-  1. `app/api/analyze/route.ts` sends strict system rules instructing Gemini to produce valid `flowchart TD` syntax inside a structured JSON payload.
-  2. The server runs `isValidMermaidSyntax()`.
-  3. If syntax errors exist, a prompt feedback correction is sent to Gemini automatically.
+### 3. Static AST & Resiliency Engine (`utils/static-flowchart-generator.ts`)
+* Rule-based static parser evaluating source code tokens via regular expressions and AST rules.
+* Detects project types, classes, methods, loop counts, conditional nesting depth, security risks, and code smells.
+* Calculates quality scorecard metrics and constructs valid Mermaid `flowchart TD` syntax without network latency.
 
-### 4. Client-Side History Persistence
-* **Why**: Users should be able to revisit previous analyses without re-querying the AI API.
-* **Implementation**: LocalStorage wrapper in `utils/storage.ts` manages a maximum of 25 records with full search and filter functionality.
+### 4. Data Storage & Utility Layer (`utils/storage.ts` & `utils/mermaid-validator.ts`)
+* **`storage.ts`**: Encapsulates `localStorage` CRUD operations for up to 25 analysis items.
+* **`mermaid-validator.ts`**: Sanitizes node labels, removes invalid HTML/markdown quotes, and validates flowchart syntax integrity.
+
+---
+
+## 🛡️ Reliability & Uptime Safeguards
+
+1. **Zero-Latency Fallback**: Guaranteed HTTP 200 output availability even when third-party AI APIs hit rate limits.
+2. **Mermaid Retry Loop**: Automatic syntax correction if initial AI output generates invalid diagram syntax.
+3. **Pure White High-Contrast Design**: High visibility optimized for screen sharing, faculty presentations, and viva demonstrations.

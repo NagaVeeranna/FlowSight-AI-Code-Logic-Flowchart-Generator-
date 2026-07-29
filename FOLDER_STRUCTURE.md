@@ -1,37 +1,35 @@
-# FlowSight – Project Directory & File Structure
+# FlowSight – Complete Folder & Directory Map
 
-```
-FlowSight/
+```text
+d:\FlowSight
 ├── app/
 │   ├── api/
 │   │   └── analyze/
-│   │       └── route.ts          # Serverless Gemini AI API Route & Syntax Validator
-│   ├── globals.css               # Base CSS, Glassmorphic styling & Mermaid SVG dark themes
-│   ├── layout.tsx                # Root layout with fonts, metadata & dark background
-│   └── page.tsx                  # Main FlowSight Split Dashboard & State Manager
+│   │       └── route.ts                  # Serverless API endpoint (Gemini SDK & AST fallback)
+│   ├── globals.css                       # Pure white theme design tokens & Mermaid overrides
+│   ├── layout.tsx                        # Root Next.js layout & Google Font loaders
+│   └── page.tsx                          # Main dashboard split-panel layout
 ├── components/
-│   ├── CodeEditor.tsx            # Monaco Editor + Toolbar + File Upload + Language Selector
-│   ├── ExplanationPanel.tsx      # Tabbed explanation breakdown (Logic, Variables, Flow, Edge Cases)
-│   ├── ExportControls.tsx        # Utility export components
-│   ├── FlowchartViewer.tsx       # Interactive Mermaid SVG viewer + Pan/Zoom + PNG/SVG download
-│   ├── Header.tsx                # Top navigation bar + brand logo + history badge
-│   └── HistorySidebar.tsx        # Slide-over drawer for local history search, filtering & restore
+│   ├── CodeEditor.tsx                    # Monaco Editor with file upload & language selector
+│   ├── ExplanationPanel.tsx              # Tabbed breakdown, scorecards, metrics & risk audit
+│   ├── FlowchartViewer.tsx               # Interactive Mermaid SVG viewer (Pan/Zoom & PNG/SVG export)
+│   ├── Header.tsx                        # High-contrast navigation header with history trigger
+│   └── HistorySidebar.tsx                # Slide-over local history drawer manager
 ├── constants/
-│   └── samples.ts                # Preset code examples (Binary Search, Merge Sort, JWT, LinkedList, DFS)
+│   └── samples.ts                        # Preset algorithm sample library (Python, Java, JS, C++, C)
 ├── types/
-│   └── analysis.ts               # Strict TypeScript interfaces for AI Request/Response, History & Samples
+│   └── analysis.ts                       # TypeScript interfaces for request/response & metrics
 ├── utils/
-│   ├── mermaid-validator.ts      # Mermaid syntax sanitizer and structural validator
-│   └── storage.ts                # LocalStorage history persistence manager
-├── public/                       # Static public assets & icons
-├── .env.example                  # Environment variables template
-├── .env.local                    # Local environment variables secret configuration
-├── next.config.mjs               # Next.js configuration
-├── tailwind.config.ts            # Tailwind CSS color tokens, glassmorphism shadows & keyframes
-├── tsconfig.json                 # TypeScript configuration
-├── package.json                  # Dependencies & scripts configuration
-├── README.md                     # Overview, features, setup & deployment instructions
-├── ARCHITECTURE.md               # System architecture diagram & design decisions
-├── API_DOCS.md                   # REST API documentation for /api/analyze
-└── FOLDER_STRUCTURE.md           # Folder structure documentation
+│   ├── mermaid-validator.ts              # Mermaid syntax sanitizer and structure checker
+│   ├── static-flowchart-generator.ts    # Evidence-based AST parser for zero-latency fallback
+│   └── storage.ts                        # LocalStorage CRUD helper
+├── .env.example                          # Environment variable template
+├── .env.local                            # Local environment configuration (GEMINI_API_KEY)
+├── .gitignore                            # Git ignore rules
+├── API_DOCS.md                           # REST API specification for /api/analyze
+├── ARCHITECTURE.md                       # System architecture & Clean Architecture data flow
+├── FOLDER_STRUCTURE.md                   # Directory map reference
+├── package.json                          # Node.js dependencies & npm scripts
+├── README.md                             # Main product README
+└── tsconfig.json                         # TypeScript configuration
 ```
