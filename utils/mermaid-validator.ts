@@ -18,6 +18,24 @@ export function cleanMermaidCode(rawMermaid: string): string {
   // Convert illegal smart quotes
   cleaned = cleaned.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
 
+  // Sanitize unescaped parentheses inside double-quoted square bracket node labels ["..."]
+  cleaned = cleaned.replace(/\["([^"]*?)"\]/g, (_, labelContent) => {
+    const sanitized = labelContent.replace(/\(/g, '#40;').replace(/\)/g, '#41;');
+    return `["${sanitized}"]`;
+  });
+
+  // Sanitize unescaped parentheses inside double-quoted diamond node labels {"..."}
+  cleaned = cleaned.replace(/\{"([^"]*?)"\}/g, (_, labelContent) => {
+    const sanitized = labelContent.replace(/\(/g, '#40;').replace(/\)/g, '#41;');
+    return `{"${sanitized}"}`;
+  });
+
+  // Sanitize unescaped parentheses inside edge label pipes |...|
+  cleaned = cleaned.replace(/\|([^|]*?)\|/g, (_, edgeLabel) => {
+    const sanitized = edgeLabel.replace(/\(/g, '#40;').replace(/\)/g, '#41;');
+    return `|${sanitized}|`;
+  });
+
   return cleaned;
 }
 
@@ -41,12 +59,6 @@ export function isValidMermaidSyntax(mermaidCode: string): { valid: boolean; err
   const closeSquare = (cleaned.match(/\]/g) || []).length;
   if (openSquare !== closeSquare) {
     return { valid: false, error: `Unbalanced square brackets: ${openSquare} open vs ${closeSquare} close.` };
-  }
-
-  const openParen = (cleaned.match(/\(/g) || []).length;
-  const closeParen = (cleaned.match(/\)/g) || []).length;
-  if (openParen !== closeParen) {
-    return { valid: false, error: `Unbalanced parentheses: ${openParen} open vs ${closeParen} close.` };
   }
 
   return { valid: true };

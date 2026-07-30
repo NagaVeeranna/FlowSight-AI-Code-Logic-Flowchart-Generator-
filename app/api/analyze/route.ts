@@ -18,6 +18,7 @@ Analyze the ENTIRE user source code and return a single, strictly valid JSON obj
    - Syntax MUST start with 'flowchart TD'.
    - Node IDs MUST be simple alphanumeric strings without spaces (e.g., Start, Cond1, Exec1).
    - Labels MUST be enclosed in double quotes inside square brackets or decision diamonds. Example: Node1["Initialize i = 0"] or Cond1{"i < n?"}.
+   - Keep label text clean and plain text (avoid unescaped parentheses or brackets inside node labels). Example: Start["Start: binary search"] instead of Start["binary_search(arr, target)"].
    - Decision branches MUST label edges with ["Yes"] / ["No"] or branch values.
 
 ### Expected JSON Output Schema:
@@ -137,10 +138,10 @@ export async function POST(req: NextRequest) {
 
     // Primary models supported by Google Gemini API
     const MODEL_CANDIDATES = [
+      'gemini-2.5-flash',
       'gemini-2.0-flash',
-      'gemini-1.5-flash',
+      'gemini-1.5-flash-latest',
       'gemini-2.0-flash-lite',
-      'gemini-1.5-pro',
     ];
 
     const userPrompt = `Target Language: ${language}\n\nSource Code:\n\`\`\`${language}\n${code}\n\`\`\``;

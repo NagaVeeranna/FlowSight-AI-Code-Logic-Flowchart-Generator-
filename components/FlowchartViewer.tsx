@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import mermaid from 'mermaid';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { cleanMermaidCode } from '@/utils/mermaid-validator';
-import { toPng, toSvg } from 'html-to-image';
+import { toPng } from 'html-to-image';
 import { Tooltip } from '@mui/material';
 import { DiagramOrientation } from '@/types/analysis';
 import {
@@ -12,10 +12,12 @@ import {
   Download,
   Check,
   Maximize2,
+  Minimize2,
   FileCode,
   AlertCircle,
   Network,
   ArrowRightLeft,
+  X,
 } from 'lucide-react';
 
 interface FlowchartViewerProps {
@@ -51,6 +53,17 @@ export const FlowchartViewer: React.FC<FlowchartViewerProps> = ({
     });
   }, []);
 
+  // Handle ESC key press to exit full screen mode
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullscreen) {
+        setIsFullscreen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
+
   // Render Mermaid code into SVG whenever mermaidCode or orientation changes
   useEffect(() => {
     let isMounted = true;
@@ -73,10 +86,12 @@ export const FlowchartViewer: React.FC<FlowchartViewerProps> = ({
           cleaned = cleaned.replace(/flowchart\s+(LR|TB|BT|RL)/i, 'flowchart TD');
         }
 
-        const uniqueId = `mermaid_svg_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-        const { svg } = await mermaid.render(uniqueId, cleaned);
+        const uniqueId = `mermaid-svg-${Math.random().toString(36).substring(2, 9)}`;
+        let { svg } = await mermaid.render(uniqueId, cleaned);
+        // Safely make SVG responsive by updating max-width without corrupting node styles
+        const responsiveSvg = svg.replace(/max-width:\s*[\d.]+(px|rem|em|vw|%)/gi, 'max-width: 100%');
         if (isMounted) {
-          setSvgContent(svg);
+          setSvgContent(responsiveSvg);
         }
       } catch (err: any) {
         console.error('Mermaid render error:', err);
@@ -135,14 +150,23 @@ export const FlowchartViewer: React.FC<FlowchartViewerProps> = ({
   return (
     <div
       className={`glass-panel flex flex-col h-full border border-slate-200 rounded-2xl overflow-hidden shadow-2xs transition-all duration-300 ${
-        isFullscreen ? 'fixed inset-4 z-50 bg-white/95 backdrop-blur-md' : ''
+        isFullscreen
+          ? 'fixed inset-0 z-50 bg-white w-screen h-screen rounded-none border-none shadow-2xl'
+          : ''
       }`}
     >
       {/* Top Controls Bar */}
-      <div className="px-4 py-3 bg-slate-100/90 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+      <div className="px-4 py-3 bg-slate-100/90 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 shrink-0">
         <div className="flex items-center space-x-2.5">
           <Network className="w-5 h-5 text-indigo-600" />
-          <span className="text-sm font-bold text-slate-800 tracking-wide">Interactive Flowchart</span>
+          <span className="text-sm font-extrabold text-slate-800 tracking-wide">
+            {isFullscreen ? 'Flowchart (Fullscreen View)' : 'Interactive Flowchart'}
+          </span>
+          {isFullscreen && (
+            <span className="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">
+              Press ESC to exit
+            </span>
+          )}
         </div>
 
         {mermaidCode && (
@@ -191,12 +215,16 @@ export const FlowchartViewer: React.FC<FlowchartViewerProps> = ({
             </Tooltip>
 
             {/* Fullscreen Toggle */}
-            <Tooltip title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen Canvas'} arrow>
+            <Tooltip title={isFullscreen ? 'Exit Fullscreen (ESC)' : 'Enlarge / Fullscreen Canvas'} arrow>
               <button
                 onClick={() => setIsFullscreen(!isFullscreen)}
-                className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-200/80 transition-colors"
+                className={`p-2 rounded-xl transition-all ${
+                  isFullscreen
+                    ? 'bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
+                }`}
               >
-                <Maximize2 className="w-4 h-4" />
+                {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
               </button>
             </Tooltip>
           </div>
@@ -204,7 +232,7 @@ export const FlowchartViewer: React.FC<FlowchartViewerProps> = ({
       </div>
 
       {/* Main Flowchart Viewer Body */}
-      <div className="flex-1 relative min-h-[350px] bg-[#f8fafc] overflow-hidden flex items-center justify-center p-4">
+      <div className="flex-1 relative min-h-0 bg-[#f8fafc] overflow-hidden flex items-center justify-center p-2 sm:p-4">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center space-y-3">
             <div className="w-10 h-10 border-3 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
@@ -222,11 +250,17 @@ export const FlowchartViewer: React.FC<FlowchartViewerProps> = ({
             </pre>
           </div>
         ) : svgContent ? (
-          <TransformWrapper initialScale={1} minScale={0.2} maxScale={4} centerOnInit={true}>
+          <TransformWrapper
+            key={isFullscreen ? 'fullscreen-mode' : 'normal-mode'}
+            initialScale={1}
+            minScale={0.1}
+            maxScale={5}
+            centerOnInit={true}
+          >
             {({ zoomIn, zoomOut, resetTransform }) => (
               <>
-                {/* Floating Zoom Controls */}
-                <div className="absolute top-4 right-4 z-20 flex items-center space-x-1.5 bg-white border border-slate-200 p-1.5 rounded-xl shadow-md">
+                {/* Floating Zoom & Fit Controls */}
+                <div className="absolute top-4 right-4 z-20 flex items-center space-x-1.5 bg-white/95 backdrop-blur-xs border border-slate-200 p-1.5 rounded-xl shadow-md">
                   <Tooltip title="Zoom In" arrow>
                     <button
                       onClick={() => zoomIn()}
@@ -243,10 +277,10 @@ export const FlowchartViewer: React.FC<FlowchartViewerProps> = ({
                       <ZoomOut className="w-4 h-4" />
                     </button>
                   </Tooltip>
-                  <Tooltip title="Reset View" arrow>
+                  <Tooltip title="Reset & Fit to Screen" arrow>
                     <button
                       onClick={() => resetTransform()}
-                      className="p-1.5 text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
+                      className="p-1.5 text-slate-700 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition-colors"
                     >
                       <RotateCcw className="w-4 h-4" />
                     </button>
@@ -254,12 +288,14 @@ export const FlowchartViewer: React.FC<FlowchartViewerProps> = ({
                 </div>
 
                 <TransformComponent
+                  wrapperStyle={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  contentStyle={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   wrapperClass="!w-full !h-full flex items-center justify-center cursor-grab active:cursor-grabbing"
                   contentClass="!w-full !h-full flex items-center justify-center"
                 >
                   <div
                     ref={containerRef}
-                    className="mermaid flex items-center justify-center p-6 w-full h-full"
+                    className="mermaid flex items-center justify-center p-2 w-full h-full max-w-full max-h-full overflow-hidden"
                     dangerouslySetInnerHTML={{ __html: svgContent }}
                   />
                 </TransformComponent>
