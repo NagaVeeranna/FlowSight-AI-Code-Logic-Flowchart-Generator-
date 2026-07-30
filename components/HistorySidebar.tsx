@@ -52,6 +52,16 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
     return matchesSearch && matchesLang;
   });
 
+  const formatDate = (timestamp: number) => {
+    const d = new Date(timestamp);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/40 backdrop-blur-xs animate-fade-in">
       <div className="w-full max-w-md bg-white border-l border-slate-200 h-full flex flex-col shadow-2xl animate-slide-up">
@@ -157,7 +167,7 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
                 <div className="flex items-center justify-between text-[10px] text-slate-500 pt-1 border-t border-slate-100">
                   <span className="flex items-center space-x-1 font-medium">
                     <Calendar className="w-3 h-3 text-slate-400" />
-                    <span>{new Date(item.timestamp).toLocaleString()}</span>
+                    <span>{formatDate(item.timestamp)}</span>
                   </span>
                   <span className="flex items-center space-x-1 text-indigo-600 font-bold">
                     <span>Reopen</span>
