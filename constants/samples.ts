@@ -1,4 +1,4 @@
-import { SampleCode, SupportedLanguage, LanguageOption } from '@/types/analysis';
+import { SampleCode, SupportedLanguage, LanguageOption, StarterTemplate } from '@/types/analysis';
 
 export const SUPPORTED_LANGUAGES: LanguageOption[] = [
   { id: 'python', name: 'Python 3', extension: '.py', monacoLanguage: 'python' },
@@ -8,13 +8,153 @@ export const SUPPORTED_LANGUAGES: LanguageOption[] = [
   { id: 'c', name: 'C', extension: '.c', monacoLanguage: 'c' },
 ];
 
+export const STARTER_TEMPLATES: StarterTemplate[] = [
+  {
+    id: 'starter_python',
+    language: 'python',
+    name: 'Python Starter',
+    code: `def process_data(items):
+    """
+    Sample starter function to process list of items.
+    """
+    results = []
+    for item in items:
+        if item % 2 == 0:
+            results.append(item * 2)
+        else:
+            results.append(item + 1)
+    return results
+
+# Main entry point
+if __name__ == "__main__":
+    sample_list = [1, 2, 3, 4, 5, 6]
+    output = process_data(sample_list)
+    print("Processed Output:", output)`
+  },
+  {
+    id: 'starter_javascript',
+    language: 'javascript',
+    name: 'JavaScript Starter',
+    code: `/**
+ * Calculate order summary with tax & discounts
+ */
+function calculateOrderTotal(items, discountCode = null) {
+  let subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  
+  if (discountCode === 'SAVE10') {
+    subtotal *= 0.90;
+  } else if (discountCode === 'VIP20') {
+    subtotal *= 0.80;
+  }
+
+  const tax = subtotal * 0.08;
+  const grandTotal = subtotal + tax;
+
+  return {
+    subtotal: subtotal.toFixed(2),
+    tax: tax.toFixed(2),
+    grandTotal: grandTotal.toFixed(2)
+  };
+}
+
+const cart = [
+  { name: 'Laptop Stand', price: 29.99, quantity: 1 },
+  { name: 'Wireless Mouse', price: 49.99, quantity: 2 }
+];
+
+console.log('Order Summary:', calculateOrderTotal(cart, 'SAVE10'));`
+  },
+  {
+    id: 'starter_java',
+    language: 'java',
+    name: 'Java Starter Class',
+    code: `import java.util.ArrayList;
+import java.util.List;
+
+public class Solution {
+    public static List<Integer> filterEvenNumbers(int[] numbers) {
+        List<Integer> evens = new ArrayList<>();
+        for (int num : numbers) {
+            if (num % 2 == 0) {
+                evens.add(num);
+            }
+        }
+        return evens;
+    }
+
+    public static void main(String[] args) {
+        int[] data = {12, 7, 19, 24, 33, 40, 50};
+        List<Integer> result = filterEvenNumbers(data);
+        System.out.println("Even Numbers: " + result);
+    }
+}`
+  },
+  {
+    id: 'starter_cpp',
+    language: 'cpp',
+    name: 'C++ Starter Template',
+    code: `#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class Solution {
+public:
+    int findMaxElement(const vector<int>& nums) {
+        if (nums.empty()) return -1;
+        int maxVal = nums[0];
+        for (size_t i = 1; i < nums.size(); ++i) {
+            if (nums[i] > maxVal) {
+                maxVal = nums[i];
+            }
+        }
+        return maxVal;
+    }
+};
+
+int main() {
+    Solution sol;
+    vector<int> numbers = {15, 89, 42, 7, 94, 61};
+    int maxNum = sol.findMaxElement(numbers);
+    cout << "Maximum Element: " << maxNum << endl;
+    return 0;
+}`
+  },
+  {
+    id: 'starter_c',
+    language: 'c',
+    name: 'C Starter Main',
+    code: `#include <stdio.h>
+#include <stdlib.h>
+
+void computeFactorial(int n) {
+    long long fact = 1;
+    if (n < 0) {
+        printf("Error: Factorial of negative number doesn't exist.\\n");
+        return;
+    }
+    for (int i = 1; i <= n; ++i) {
+        fact *= i;
+    }
+    printf("Factorial of %d = %lld\\n", n, fact);
+}
+
+int main() {
+    int num = 7;
+    computeFactorial(num);
+    return 0;
+}`
+  }
+];
+
 export const SAMPLE_CODES: SampleCode[] = [
   {
     id: 'binary_search_py',
     title: 'Binary Search (Python)',
     language: 'python',
     category: 'Algorithms',
-    description: 'Logarithmic target search in a sorted array using divide and conquer.',
+    description: 'Logarithmic O(log N) target search in a sorted array using divide and conquer.',
     code: `def binary_search(arr, target):
     """
     Performs binary search on a sorted array.
@@ -40,6 +180,28 @@ numbers = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
 target_val = 23
 result = binary_search(numbers, target_val)
 print(f"Target found at index: {result}")`,
+  },
+  {
+    id: 'fibonacci_dp_py',
+    title: 'Fibonacci Memoization (Python)',
+    language: 'python',
+    category: 'Dynamic Programming',
+    description: 'Optimal O(N) Dynamic Programming with memoization hash table.',
+    code: `def fib_memo(n, memo={}):
+    """
+    Computes Nth Fibonacci number using top-down Dynamic Programming.
+    """
+    if n in memo:
+        return memo[n]
+    if n <= 1:
+        return n
+
+    memo[n] = fib_memo(n - 1, memo) + fib_memo(n - 2, memo)
+    return memo[n]
+
+# Test fibonacci calculation
+n_terms = 10
+print(f"The {n_terms}th Fibonacci number is: {fib_memo(n_terms)}")`,
   },
   {
     id: 'merge_sort_java',
@@ -154,7 +316,7 @@ public:
     id: 'dfs_graph_c',
     title: 'Depth-First Search DFS (C)',
     language: 'c',
-    category: 'Algorithms',
+    category: 'Graphs',
     description: 'Recursive adjacency list graph traversal tracking visited vertices.',
     code: `#include <stdio.h>
 #include <stdlib.h>

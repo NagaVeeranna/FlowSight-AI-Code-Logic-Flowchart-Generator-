@@ -97,11 +97,20 @@ export interface HistoryItem {
   result: AnalysisResponse;
 }
 
+export type InputMode = 'custom' | 'preset';
+
+export interface StarterTemplate {
+  id: string;
+  language: SupportedLanguage;
+  name: string;
+  code: string;
+}
+
 export interface SampleCode {
   id: string;
   title: string;
   language: SupportedLanguage;
-  category: 'Algorithms' | 'Data Structures' | 'Web & API' | 'Basics';
+  category: 'Algorithms' | 'Data Structures' | 'Web & API' | 'Dynamic Programming' | 'Graphs';
   description: string;
   code: string;
 }
