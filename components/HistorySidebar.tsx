@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { HistoryItem, SupportedLanguage } from '@/types/analysis';
 import { HistoryStorage } from '@/utils/storage';

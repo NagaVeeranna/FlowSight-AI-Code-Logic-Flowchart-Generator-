@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { DetailedExplanation } from '@/types/analysis';
 import {
@@ -23,7 +25,6 @@ import {
   Lock,
   Bug,
 } from 'lucide-react';
-import { Tooltip, Chip } from '@mui/material';
 
 interface ExplanationPanelProps {
   summary: string | null;
@@ -74,11 +75,10 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
         <div className="flex items-center space-x-2 overflow-x-auto py-1 scrollbar-none max-w-full">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all shrink-0 flex items-center space-x-1.5 ${
-              activeTab === 'overview'
+            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all shrink-0 flex items-center space-x-1.5 ${activeTab === 'overview'
                 ? 'bg-indigo-600 text-white shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
-            }`}
+              }`}
           >
             <BookOpen className="w-3.5 h-3.5" />
             <span>Overview & Quality</span>
@@ -86,11 +86,10 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
 
           <button
             onClick={() => setActiveTab('analysis')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all shrink-0 flex items-center space-x-1.5 ${
-              activeTab === 'analysis'
+            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all shrink-0 flex items-center space-x-1.5 ${activeTab === 'analysis'
                 ? 'bg-indigo-600 text-white shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
-            }`}
+              }`}
           >
             <Cpu className="w-3.5 h-3.5 text-indigo-200" />
             <span>Algorithms & OOP</span>
@@ -98,11 +97,10 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
 
           <button
             onClick={() => setActiveTab('stepByStep')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all shrink-0 flex items-center space-x-1.5 ${
-              activeTab === 'stepByStep'
+            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all shrink-0 flex items-center space-x-1.5 ${activeTab === 'stepByStep'
                 ? 'bg-indigo-600 text-white shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
-            }`}
+              }`}
           >
             <ListOrdered className="w-3.5 h-3.5" />
             <span>Step-by-Step</span>
@@ -110,11 +108,10 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
 
           <button
             onClick={() => setActiveTab('variables')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all shrink-0 flex items-center space-x-1.5 ${
-              activeTab === 'variables'
+            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all shrink-0 flex items-center space-x-1.5 ${activeTab === 'variables'
                 ? 'bg-indigo-600 text-white shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
-            }`}
+              }`}
           >
             <Variable className="w-3.5 h-3.5" />
             <span>Variables</span>
@@ -122,11 +119,10 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
 
           <button
             onClick={() => setActiveTab('flow')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all shrink-0 flex items-center space-x-1.5 ${
-              activeTab === 'flow'
+            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all shrink-0 flex items-center space-x-1.5 ${activeTab === 'flow'
                 ? 'bg-indigo-600 text-white shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
-            }`}
+              }`}
           >
             <Activity className="w-3.5 h-3.5" />
             <span>Control Flow</span>
@@ -134,25 +130,23 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
 
           <button
             onClick={() => setActiveTab('security')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all shrink-0 flex items-center space-x-1.5 ${
-              activeTab === 'security'
+            className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all shrink-0 flex items-center space-x-1.5 ${activeTab === 'security'
                 ? 'bg-indigo-600 text-white shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
-            }`}
+              }`}
           >
             <ShieldAlert className="w-3.5 h-3.5 text-rose-500" />
             <span>Security & Audit</span>
           </button>
         </div>
 
-        <Tooltip title="Copy Summary & Overview" arrow>
-          <button
-            onClick={handleCopyExplanation}
-            className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-200/80 transition-colors shrink-0"
-          >
-            {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-          </button>
-        </Tooltip>
+        <button
+          onClick={handleCopyExplanation}
+          title="Copy Summary & Overview"
+          className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-200/80 transition-colors shrink-0 cursor-pointer"
+        >
+          {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+        </button>
       </div>
 
       {/* Tab Content Container */}
@@ -383,7 +377,7 @@ export const ExplanationPanel: React.FC<ExplanationPanelProps> = ({
                   >
                     <div className="flex items-center space-x-2">
                       <span className="font-mono font-bold text-indigo-700 text-xs">{v.name}</span>
-                      <Chip label={v.type} size="small" variant="outlined" />
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-100 border border-slate-300 text-slate-700">{v.type}</span>
                     </div>
                     <p className="text-slate-700 text-xs font-medium">{v.purpose}</p>
                   </div>

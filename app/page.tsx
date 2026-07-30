@@ -1,10 +1,19 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { Header } from '@/components/Header';
-import { CodeEditor } from '@/components/CodeEditor';
-import { FlowchartViewer } from '@/components/FlowchartViewer';
 import { ExplanationPanel } from '@/components/ExplanationPanel';
+
+const CodeEditor = dynamic(
+  () => import('@/components/CodeEditor').then((mod) => mod.CodeEditor),
+  { ssr: false }
+);
+
+const FlowchartViewer = dynamic(
+  () => import('@/components/FlowchartViewer').then((mod) => mod.FlowchartViewer),
+  { ssr: false }
+);
 import { HistorySidebar } from '@/components/HistorySidebar';
 import { AnalysisResponse, HistoryItem, SupportedLanguage } from '@/types/analysis';
 import { HistoryStorage } from '@/utils/storage';

@@ -1,6 +1,7 @@
+'use client';
+
 import React from 'react';
 import { Network, History, Sparkles } from 'lucide-react';
-import { Tooltip, Badge } from '@mui/material';
 
 interface HeaderProps {
   onToggleHistory: () => void;
@@ -35,17 +36,21 @@ export const Header: React.FC<HeaderProps> = ({ onToggleHistory, historyCount })
       {/* Action Controls */}
       <div className="flex items-center space-x-3">
         {/* History Toggle Button (Large & Prominent) */}
-        <Tooltip title="View Saved Analysis History" arrow>
-          <button
-            onClick={onToggleHistory}
-            className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-extrabold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 transition-all flex items-center space-x-2 sm:space-x-2.5 shadow-md hover:shadow-indigo-500/30 ring-2 ring-indigo-500/30 cursor-pointer"
-          >
-            <Badge badgeContent={historyCount} color="error" max={99}>
-              <History className="w-4 h-4 sm:w-5 sm:h-5 text-white mr-1" />
-            </Badge>
-            <span className="inline font-extrabold tracking-wide">Analysis History</span>
-          </button>
-        </Tooltip>
+        <button
+          onClick={onToggleHistory}
+          title="View Saved Analysis History"
+          className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-extrabold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 transition-all flex items-center space-x-2 sm:space-x-2.5 shadow-md hover:shadow-indigo-500/30 ring-2 ring-indigo-500/30 cursor-pointer relative"
+        >
+          <div className="relative flex items-center">
+            <History className="w-4 h-4 sm:w-5 sm:h-5 text-white mr-1" />
+            {historyCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-rose-500 text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-indigo-600 shadow-xs">
+                {historyCount > 99 ? '99+' : historyCount}
+              </span>
+            )}
+          </div>
+          <span className="inline font-extrabold tracking-wide">Analysis History</span>
+        </button>
 
         {/* Open & Free Tool Badge */}
         <div className="hidden xs:flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs font-bold shadow-2xs">

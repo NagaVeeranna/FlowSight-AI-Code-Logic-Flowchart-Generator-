@@ -1,9 +1,9 @@
+'use client';
+
 import React, { useEffect, useRef, useState } from 'react';
-import mermaid from 'mermaid';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { cleanMermaidCode } from '@/utils/mermaid-validator';
 import { toPng } from 'html-to-image';
-import { Tooltip } from '@mui/material';
 import { DiagramOrientation } from '@/types/analysis';
 import {
   ZoomIn,
@@ -41,22 +41,7 @@ export const FlowchartViewer: React.FC<FlowchartViewerProps> = ({
 
   const [theme, setTheme] = useState<'default' | 'dark' | 'forest' | 'neutral'>('default');
 
-  // Initialize Mermaid configuration
-  useEffect(() => {
-    mermaid.initialize({
-      startOnLoad: false,
-      theme: theme,
-      securityLevel: 'loose',
-      fontFamily: 'Inter, sans-serif',
-      flowchart: {
-        htmlLabels: true,
-        curve: 'basis',
-        useMaxWidth: true,
-      },
-    });
-  }, [theme]);
-
-  // Handle ESC key press to exit full screen mode
+// Handle ESC key press to exit full screen mode
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isFullscreen) {
@@ -80,6 +65,8 @@ export const FlowchartViewer: React.FC<FlowchartViewerProps> = ({
     const renderDiagram = async () => {
       setRenderError(null);
       try {
+        const mermaid = (await import('mermaid')).default;
+
         let cleaned = cleanMermaidCode(mermaidCode);
 
         // Adjust diagram orientation if toggled to LR
@@ -187,78 +174,71 @@ export const FlowchartViewer: React.FC<FlowchartViewerProps> = ({
         {mermaidCode && (
           <div className="flex items-center space-x-2">
             {/* Diagram Theme Selector */}
-            <Tooltip title="Diagram Style Theme" arrow>
-              <div className="flex items-center space-x-1 px-2 py-1 rounded-xl bg-white border border-slate-300 shadow-2xs">
-                <Palette className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-                <select
-                  value={theme}
-                  onChange={(e: any) => setTheme(e.target.value)}
-                  className="text-xs font-extrabold text-slate-800 bg-transparent focus:outline-none cursor-pointer"
-                >
-                  <option value="default">Light</option>
-                  <option value="dark">Dark Slate</option>
-                  <option value="forest">Forest</option>
-                  <option value="neutral">Monochrome</option>
-                </select>
-              </div>
-            </Tooltip>
+            <div title="Diagram Style Theme" className="flex items-center space-x-1 px-2 py-1 rounded-xl bg-white border border-slate-300 shadow-2xs">
+              <Palette className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+              <select
+                value={theme}
+                onChange={(e: any) => setTheme(e.target.value)}
+                className="text-xs font-extrabold text-slate-800 bg-transparent focus:outline-none cursor-pointer"
+              >
+                <option value="default">Light</option>
+                <option value="dark">Dark Slate</option>
+                <option value="forest">Forest</option>
+                <option value="neutral">Monochrome</option>
+              </select>
+            </div>
 
             {/* Diagram Orientation Toggle (Top-Down vs Left-Right) */}
-            <Tooltip title={`Switch Layout: ${orientation === 'TD' ? 'Top-Down' : 'Left-to-Right'}`} arrow>
-              <button
-                onClick={toggleOrientation}
-                className="px-2.5 py-1.5 rounded-xl bg-white border border-slate-300 text-xs font-extrabold text-indigo-700 hover:bg-slate-50 transition-all flex items-center space-x-1.5 shadow-2xs"
-              >
-                <ArrowRightLeft className="w-3.5 h-3.5" />
-                <span>{orientation}</span>
-              </button>
-            </Tooltip>
+            <button
+              onClick={toggleOrientation}
+              title={`Switch Layout: ${orientation === 'TD' ? 'Top-Down' : 'Left-to-Right'}`}
+              className="px-2.5 py-1.5 rounded-xl bg-white border border-slate-300 text-xs font-extrabold text-indigo-700 hover:bg-slate-50 transition-all flex items-center space-x-1.5 shadow-2xs cursor-pointer"
+            >
+              <ArrowRightLeft className="w-3.5 h-3.5" />
+              <span>{orientation}</span>
+            </button>
 
             {/* Copy Mermaid Code */}
-            <Tooltip title="Copy Mermaid Syntax" arrow>
-              <button
-                onClick={handleCopyCode}
-                className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-200/80 transition-colors"
-              >
-                {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <FileCode className="w-4 h-4" />}
-              </button>
-            </Tooltip>
+            <button
+              onClick={handleCopyCode}
+              title="Copy Mermaid Syntax"
+              className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-200/80 transition-colors cursor-pointer"
+            >
+              {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <FileCode className="w-4 h-4" />}
+            </button>
 
             {/* Download SVG */}
-            <Tooltip title="Download Vector SVG" arrow>
-              <button
-                onClick={handleDownloadSVG}
-                className="px-3 py-1.5 rounded-xl bg-white border border-slate-300 text-xs font-extrabold text-slate-800 hover:bg-slate-50 transition-all flex items-center space-x-1.5 shadow-2xs"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>SVG</span>
-              </button>
-            </Tooltip>
+            <button
+              onClick={handleDownloadSVG}
+              title="Download Vector SVG"
+              className="px-3 py-1.5 rounded-xl bg-white border border-slate-300 text-xs font-extrabold text-slate-800 hover:bg-slate-50 transition-all flex items-center space-x-1.5 shadow-2xs cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>SVG</span>
+            </button>
 
             {/* Download PNG */}
-            <Tooltip title="Download High-Res PNG" arrow>
-              <button
-                onClick={handleDownloadPNG}
-                className="px-3 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-xs font-extrabold text-indigo-900 hover:bg-indigo-100 transition-all flex items-center space-x-1.5 shadow-2xs"
-              >
-                <Download className="w-3.5 h-3.5 text-indigo-600" />
-                <span>PNG</span>
-              </button>
-            </Tooltip>
+            <button
+              onClick={handleDownloadPNG}
+              title="Download High-Res PNG"
+              className="px-3 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-xs font-extrabold text-indigo-900 hover:bg-indigo-100 transition-all flex items-center space-x-1.5 shadow-2xs cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5 text-indigo-600" />
+              <span>PNG</span>
+            </button>
 
             {/* Fullscreen Toggle */}
-            <Tooltip title={isFullscreen ? 'Exit Fullscreen (ESC)' : 'Enlarge / Fullscreen Canvas'} arrow>
-              <button
-                onClick={() => setIsFullscreen(!isFullscreen)}
-                className={`p-2 rounded-xl transition-all ${
-                  isFullscreen
-                    ? 'bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
-                }`}
-              >
-                {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-              </button>
-            </Tooltip>
+            <button
+              onClick={() => setIsFullscreen(!isFullscreen)}
+              title={isFullscreen ? 'Exit Fullscreen (ESC)' : 'Enlarge / Fullscreen Canvas'}
+              className={`p-2 rounded-xl transition-all cursor-pointer ${
+                isFullscreen
+                  ? 'bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
+              }`}
+            >
+              {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+            </button>
           </div>
         )}
       </div>
@@ -293,30 +273,27 @@ export const FlowchartViewer: React.FC<FlowchartViewerProps> = ({
               <>
                 {/* Floating Zoom & Fit Controls */}
                 <div className="absolute top-4 right-4 z-20 flex items-center space-x-1.5 bg-white/95 backdrop-blur-xs border border-slate-200 p-1.5 rounded-xl shadow-md">
-                  <Tooltip title="Zoom In" arrow>
-                    <button
-                      onClick={() => zoomIn()}
-                      className="p-1.5 text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
-                    >
-                      <ZoomIn className="w-4 h-4" />
-                    </button>
-                  </Tooltip>
-                  <Tooltip title="Zoom Out" arrow>
-                    <button
-                      onClick={() => zoomOut()}
-                      className="p-1.5 text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
-                    >
-                      <ZoomOut className="w-4 h-4" />
-                    </button>
-                  </Tooltip>
-                  <Tooltip title="Reset & Fit to Screen" arrow>
-                    <button
-                      onClick={() => resetTransform()}
-                      className="p-1.5 text-slate-700 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition-colors"
-                    >
-                      <RotateCcw className="w-4 h-4" />
-                    </button>
-                  </Tooltip>
+                  <button
+                    onClick={() => zoomIn()}
+                    title="Zoom In"
+                    className="p-1.5 text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                  >
+                    <ZoomIn className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => zoomOut()}
+                    title="Zoom Out"
+                    className="p-1.5 text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                  >
+                    <ZoomOut className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => resetTransform()}
+                    title="Reset & Fit to Screen"
+                    className="p-1.5 text-slate-700 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                  </button>
                 </div>
 
                 <TransformComponent

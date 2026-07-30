@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useRef, useState } from 'react';
 import Editor from '@monaco-editor/react';
 import { SupportedLanguage, InputMode } from '@/types/analysis';
@@ -12,8 +14,8 @@ import {
   PenTool,
   RotateCcw,
   FileText,
+  Loader2,
 } from 'lucide-react';
-import { Tooltip, CircularProgress } from '@mui/material';
 
 interface CodeEditorProps {
   code: string;
@@ -213,34 +215,31 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
               accept=".py,.js,.java,.cpp,.c,.txt"
               className="hidden"
             />
-            <Tooltip title="Upload Source File (.py, .java, .js, .cpp, .c)" arrow>
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="p-1.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-200/80 transition-colors"
-              >
-                <Upload className="w-4 h-4" />
-              </button>
-            </Tooltip>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              title="Upload Source File (.py, .java, .js, .cpp, .c)"
+              className="p-1.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-200/80 transition-colors cursor-pointer"
+            >
+              <Upload className="w-4 h-4" />
+            </button>
 
-            <Tooltip title="Copy Source Code" arrow>
-              <button
-                onClick={handleCopyCode}
-                disabled={!code}
-                className="p-1.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-200/80 transition-colors disabled:opacity-40"
-              >
-                {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-              </button>
-            </Tooltip>
+            <button
+              onClick={handleCopyCode}
+              disabled={!code}
+              title="Copy Source Code"
+              className="p-1.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-200/80 transition-colors disabled:opacity-40 cursor-pointer"
+            >
+              {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+            </button>
 
-            <Tooltip title="Clear Code Editor" arrow>
-              <button
-                onClick={() => onChangeCode('')}
-                disabled={!code}
-                className="p-1.5 rounded-xl text-slate-600 hover:text-rose-600 hover:bg-slate-200/80 transition-colors disabled:opacity-40"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </Tooltip>
+            <button
+              onClick={() => onChangeCode('')}
+              disabled={!code}
+              title="Clear Code Editor"
+              className="p-1.5 rounded-xl text-slate-600 hover:text-rose-600 hover:bg-slate-200/80 transition-colors disabled:opacity-40 cursor-pointer"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>
@@ -272,16 +271,16 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         </div>
 
         {/* Dynamic Editing Status & Reset Option */}
-        <div className="flex items-center space-x-2 shrink-0 justify-end">
-          {inputMode === 'preset' && activePreset && (
+        <div className="flex items-center space-x-2 shrink-0">
+          {inputMode === 'preset' && (
             isPresetEdited ? (
               <div className="flex items-center space-x-2">
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[11px] font-bold border border-amber-500/30 animate-pulse">
                   • Modified
                 </span>
                 <button
                   onClick={handleResetPreset}
-                  className="flex items-center space-x-1 px-2 py-0.5 rounded bg-indigo-800 hover:bg-indigo-700 text-white text-[11px] font-bold transition-colors shadow-2xs"
+                  className="flex items-center space-x-1 px-2 py-0.5 rounded bg-indigo-800 hover:bg-indigo-700 text-white text-[11px] font-bold transition-colors shadow-2xs cursor-pointer"
                 >
                   <RotateCcw className="w-3 h-3" />
                   <span>Reset Default</span>
@@ -296,7 +295,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         </div>
       </div>
 
-      {/* Monaco Editor Container - flex-1 min-h-0 overflow-hidden so it flexes dynamically without pushing footer off screen */}
+      {/* Monaco Editor Container */}
       <div className="flex-1 w-full relative min-h-0 overflow-hidden">
         <Editor
           height="100%"
@@ -319,7 +318,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         />
       </div>
 
-      {/* Footer / Analyze Bar - shrink-0 guarantees line count, char count, and button are ALWAYS visible */}
+      {/* Footer / Analyze Bar */}
       <div className="px-4 py-3 bg-slate-100/90 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
         <div className="text-xs text-slate-600 flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
           <span className="font-mono font-bold text-indigo-700">{lineCount} {lineCount === 1 ? 'line' : 'lines'}</span>
@@ -338,7 +337,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           >
             {isLoading ? (
               <>
-                <CircularProgress size={16} color="inherit" />
+                <Loader2 className="w-4 h-4 animate-spin text-white" />
                 <span>Analyzing Code Logic...</span>
               </>
             ) : (
