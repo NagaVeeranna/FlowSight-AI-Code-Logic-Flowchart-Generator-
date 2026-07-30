@@ -47,11 +47,11 @@ export const Header: React.FC<HeaderProps> = ({ onToggleHistory, historyCount })
           </button>
         </Tooltip>
 
-        {/* Internship Badge */}
+        {/* Open & Free Tool Badge */}
         <div className="hidden xs:flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs font-bold shadow-2xs">
           <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-          <span className="hidden sm:inline">Internship Edition</span>
-          <span className="sm:hidden">Pro</span>
+          <span className="hidden sm:inline">Free & Open Tool</span>
+          <span className="sm:hidden">Open</span>
         </div>
       </div>
     </header>
