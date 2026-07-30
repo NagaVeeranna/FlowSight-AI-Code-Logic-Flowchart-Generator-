@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import Editor from '@monaco-editor/react';
 import { SupportedLanguage, InputMode } from '@/types/analysis';
 import { SUPPORTED_LANGUAGES, SAMPLE_CODES, STARTER_TEMPLATES } from '@/constants/samples';
@@ -11,8 +11,7 @@ import {
   Sparkles,
   PenTool,
   RotateCcw,
-  FileCode2,
-  Layers,
+  FileText,
 } from 'lucide-react';
 import { Tooltip, CircularProgress } from '@mui/material';
 
@@ -43,11 +42,17 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 
   const activePreset = SAMPLE_CODES.find((s) => s.id === selectedPresetId);
 
-  // Check if code has been edited relative to selected preset
+  // Helper to retrieve default basic starter code for a specific language
+  const getBasicStarterCode = (lang: SupportedLanguage): string => {
+    const tmpl = STARTER_TEMPLATES.find((t) => t.language === lang);
+    return tmpl ? tmpl.code : `# Basic ${lang} code\n`;
+  };
+
+  // Check if current code matches active preset algorithm
   const isPresetEdited =
     inputMode === 'preset' && activePreset ? code.trim() !== activePreset.code.trim() : false;
 
-  // Sync mode if selected preset changes or code loaded from outside
+  // Switch to Preset Mode & load sample algorithm
   const handleSelectSample = (sampleId: string) => {
     const sample = SAMPLE_CODES.find((s) => s.id === sampleId);
     if (sample) {
@@ -58,19 +63,31 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     }
   };
 
+  // Switch to Custom Code Mode & load basic code for currently selected language
+  const handleSwitchToCustomMode = (targetLang?: SupportedLanguage) => {
+    const langToUse = targetLang || language;
+    setInputMode('custom');
+    if (targetLang) {
+      onChangeLanguage(targetLang);
+    }
+    const starterCode = getBasicStarterCode(langToUse);
+    onChangeCode(starterCode);
+  };
+
+  // Handle changing language while in Custom Code mode
+  const handleChangeLanguageCustom = (newLang: SupportedLanguage) => {
+    onChangeLanguage(newLang);
+    if (inputMode === 'custom') {
+      const starterCode = getBasicStarterCode(newLang);
+      onChangeCode(starterCode);
+    }
+  };
+
+  // Reset preset code to default algorithm
   const handleResetPreset = () => {
     if (activePreset) {
       onChangeLanguage(activePreset.language);
       onChangeCode(activePreset.code);
-    }
-  };
-
-  const handleSelectStarterTemplate = (templateId: string) => {
-    const template = STARTER_TEMPLATES.find((t) => t.id === templateId);
-    if (template) {
-      setInputMode('custom');
-      onChangeLanguage(template.language);
-      onChangeCode(template.code);
     }
   };
 
@@ -111,8 +128,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 
   return (
     <div className="flex flex-col h-full w-full glass-panel border border-slate-200 rounded-2xl overflow-hidden shadow-2xs transition-all duration-300">
-      {/* Top Toolbar */}
-      <div className="px-4 py-3 bg-slate-100/95 border-b border-slate-200 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      {/* Top Toolbar - shrink-0 to prevent layout collapse */}
+      <div className="px-4 py-3 bg-slate-100/95 border-b border-slate-200 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shrink-0">
         {/* Dynamic Mode Switcher (Custom Code vs Preset Algorithms) */}
         <div className="flex flex-wrap items-center gap-2.5">
           <div className="flex items-center space-x-1.5 text-indigo-700 mr-1 shrink-0">
@@ -123,7 +140,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           {/* Segmented Mode Control Tabs */}
           <div className="flex items-center p-1 bg-slate-200/80 rounded-xl border border-slate-300/50">
             <button
-              onClick={() => setInputMode('custom')}
+              onClick={() => handleSwitchToCustomMode()}
               className={`flex items-center space-x-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
                 inputMode === 'custom'
                   ? 'bg-white text-indigo-700 shadow-2xs font-extrabold'
@@ -134,7 +151,13 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
               <span>Custom Code</span>
             </button>
             <button
-              onClick={() => setInputMode('preset')}
+              onClick={() => {
+                setInputMode('preset');
+                if (activePreset) {
+                  onChangeLanguage(activePreset.language);
+                  onChangeCode(activePreset.code);
+                }
+              }}
               className={`flex items-center space-x-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
                 inputMode === 'preset'
                   ? 'bg-white text-indigo-700 shadow-2xs font-extrabold'
@@ -150,58 +173,35 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         {/* Dynamic Action Controls based on Input Mode */}
         <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2">
           {inputMode === 'custom' ? (
-            <>
-              {/* Language Selector */}
-              <select
-                value={language}
-                onChange={(e) => onChangeLanguage(e.target.value as SupportedLanguage)}
-                className="bg-white border border-slate-300 text-slate-800 text-xs rounded-xl px-3 py-1.5 font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/30 cursor-pointer shadow-2xs"
-              >
-                {SUPPORTED_LANGUAGES.map((lang) => (
-                  <option key={lang.id} value={lang.id} className="bg-white text-slate-800">
-                    {lang.name}
-                  </option>
-                ))}
-              </select>
-
-              {/* Starter Boilerplate Template Dropdown */}
-              <select
-                defaultValue=""
-                onChange={(e) => {
-                  if (e.target.value) handleSelectStarterTemplate(e.target.value);
-                  e.target.value = '';
-                }}
-                className="bg-slate-50 border border-slate-300 text-slate-700 text-xs rounded-xl px-2.5 py-1.5 font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/30 cursor-pointer max-w-[150px] truncate shadow-2xs"
-              >
-                <option value="" disabled className="bg-white text-slate-500">
-                  ⚡ Starter Code...
+            /* Language Selector in Custom Mode (Changes language & auto-loads basic code) */
+            <select
+              value={language}
+              onChange={(e) => handleChangeLanguageCustom(e.target.value as SupportedLanguage)}
+              className="bg-white border border-slate-300 text-slate-800 text-xs rounded-xl px-3 py-1.5 font-extrabold focus:outline-none focus:ring-2 focus:ring-indigo-500/30 cursor-pointer shadow-2xs"
+            >
+              {SUPPORTED_LANGUAGES.map((lang) => (
+                <option key={lang.id} value={lang.id} className="bg-white text-slate-800">
+                  {lang.name}
                 </option>
-                {STARTER_TEMPLATES.map((t) => (
-                  <option key={t.id} value={t.id} className="bg-white text-slate-800">
-                    {t.name}
-                  </option>
-                ))}
-              </select>
-            </>
+              ))}
+            </select>
           ) : (
-            <>
-              {/* Preset Algorithms Selector */}
-              <select
-                value={selectedPresetId}
-                onChange={(e) => handleSelectSample(e.target.value)}
-                className="bg-indigo-50 border border-indigo-300 text-indigo-950 text-xs rounded-xl px-3 py-1.5 font-extrabold focus:outline-none focus:ring-2 focus:ring-indigo-500/30 cursor-pointer max-w-[210px] sm:max-w-xs truncate shadow-2xs"
-              >
-                {categories.map((cat) => (
-                  <optgroup key={cat} label={cat} className="bg-slate-100 font-bold text-slate-700">
-                    {SAMPLE_CODES.filter((s) => s.category === cat).map((s) => (
-                      <option key={s.id} value={s.id} className="bg-white text-slate-800 font-medium">
-                        {s.title}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-            </>
+            /* Preset Algorithms Selector */
+            <select
+              value={selectedPresetId}
+              onChange={(e) => handleSelectSample(e.target.value)}
+              className="bg-indigo-50 border border-indigo-300 text-indigo-950 text-xs rounded-xl px-3 py-1.5 font-extrabold focus:outline-none focus:ring-2 focus:ring-indigo-500/30 cursor-pointer max-w-[210px] sm:max-w-xs truncate shadow-2xs"
+            >
+              {categories.map((cat) => (
+                <optgroup key={cat} label={cat} className="bg-slate-100 font-bold text-slate-700">
+                  {SAMPLE_CODES.filter((s) => s.category === cat).map((s) => (
+                    <option key={s.id} value={s.id} className="bg-white text-slate-800 font-medium">
+                      {s.title}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
           )}
 
           {/* Icon Actions (Upload, Copy, Clear) */}
@@ -245,8 +245,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         </div>
       </div>
 
-      {/* Dynamic Status / Info Sub-Bar */}
-      <div className="px-4 py-2 bg-indigo-950 text-indigo-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs border-b border-indigo-900 shadow-inner">
+      {/* Dynamic Status / Info Sub-Bar - shrink-0 to prevent layout collapse */}
+      <div className="px-4 py-2 bg-indigo-950 text-indigo-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs border-b border-indigo-900 shadow-inner shrink-0">
         <div className="flex items-center space-x-2 truncate">
           {inputMode === 'preset' && activePreset ? (
             <>
@@ -261,11 +261,11 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           ) : (
             <>
               <span className="px-2 py-0.5 rounded-md bg-emerald-950 text-emerald-300 border border-emerald-800/60 font-mono text-[11px] font-semibold uppercase tracking-wider shrink-0 flex items-center gap-1">
-                <PenTool className="w-3 h-3 text-emerald-400" />
-                Custom Input
+                <FileText className="w-3 h-3 text-emerald-400" />
+                Custom Code Mode
               </span>
               <span className="font-medium text-slate-200 truncate">
-                Manual code entry or loaded file ({selectedLangObj.name})
+                Basic {selectedLangObj.name} starter code loaded. Edit or enter your custom code below.
               </span>
             </>
           )}
@@ -296,8 +296,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         </div>
       </div>
 
-      {/* Monaco Editor Container */}
-      <div className="flex-1 w-full relative min-h-[380px] sm:min-h-[440px] lg:min-h-[480px]">
+      {/* Monaco Editor Container - flex-1 min-h-0 overflow-hidden so it flexes dynamically without pushing footer off screen */}
+      <div className="flex-1 w-full relative min-h-0 overflow-hidden">
         <Editor
           height="100%"
           language={selectedLangObj.monacoLanguage}
@@ -319,8 +319,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         />
       </div>
 
-      {/* Footer / Analyze Bar */}
-      <div className="px-4 py-3 bg-slate-100/90 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+      {/* Footer / Analyze Bar - shrink-0 guarantees line count, char count, and button are ALWAYS visible */}
+      <div className="px-4 py-3 bg-slate-100/90 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
         <div className="text-xs text-slate-600 flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
           <span className="font-mono font-bold text-indigo-700">{lineCount} {lineCount === 1 ? 'line' : 'lines'}</span>
           <span>•</span>
