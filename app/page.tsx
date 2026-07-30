@@ -33,6 +33,18 @@ export default function Home() {
     setHistoryItems(saved);
   }, []);
 
+  // Global Ctrl + Enter / Cmd + Enter shortcut to trigger analysis
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        handleAnalyze();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [code, language, isLoading]);
+
   const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 4000);

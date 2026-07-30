@@ -17,6 +17,7 @@ import {
   AlertCircle,
   Network,
   ArrowRightLeft,
+  Palette,
   X,
 } from 'lucide-react';
 
@@ -38,11 +39,13 @@ export const FlowchartViewer: React.FC<FlowchartViewerProps> = ({
   const [orientation, setOrientation] = useState<DiagramOrientation>('TD');
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Initialize Mermaid configuration in light default theme
+  const [theme, setTheme] = useState<'default' | 'dark' | 'forest' | 'neutral'>('default');
+
+  // Initialize Mermaid configuration
   useEffect(() => {
     mermaid.initialize({
       startOnLoad: false,
-      theme: 'default',
+      theme: theme,
       securityLevel: 'loose',
       fontFamily: 'Inter, sans-serif',
       flowchart: {
@@ -51,7 +54,7 @@ export const FlowchartViewer: React.FC<FlowchartViewerProps> = ({
         useMaxWidth: true,
       },
     });
-  }, []);
+  }, [theme]);
 
   // Handle ESC key press to exit full screen mode
   useEffect(() => {
@@ -64,7 +67,7 @@ export const FlowchartViewer: React.FC<FlowchartViewerProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isFullscreen]);
 
-  // Render Mermaid code into SVG whenever mermaidCode or orientation changes
+  // Render Mermaid code into SVG whenever mermaidCode, orientation, or theme changes
   useEffect(() => {
     let isMounted = true;
 
@@ -86,6 +89,18 @@ export const FlowchartViewer: React.FC<FlowchartViewerProps> = ({
           cleaned = cleaned.replace(/flowchart\s+(LR|TB|BT|RL)/i, 'flowchart TD');
         }
 
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: theme,
+          securityLevel: 'loose',
+          fontFamily: 'Inter, sans-serif',
+          flowchart: {
+            htmlLabels: true,
+            curve: 'basis',
+            useMaxWidth: true,
+          },
+        });
+
         const uniqueId = `mermaid-svg-${Math.random().toString(36).substring(2, 9)}`;
         let { svg } = await mermaid.render(uniqueId, cleaned);
         // Safely make SVG responsive by updating max-width without corrupting node styles
@@ -106,7 +121,7 @@ export const FlowchartViewer: React.FC<FlowchartViewerProps> = ({
     return () => {
       isMounted = false;
     };
-  }, [mermaidCode, orientation]);
+  }, [mermaidCode, orientation, theme]);
 
   const handleCopyCode = () => {
     if (!mermaidCode) return;
@@ -171,6 +186,23 @@ export const FlowchartViewer: React.FC<FlowchartViewerProps> = ({
 
         {mermaidCode && (
           <div className="flex items-center space-x-2">
+            {/* Diagram Theme Selector */}
+            <Tooltip title="Diagram Style Theme" arrow>
+              <div className="flex items-center space-x-1 px-2 py-1 rounded-xl bg-white border border-slate-300 shadow-2xs">
+                <Palette className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                <select
+                  value={theme}
+                  onChange={(e: any) => setTheme(e.target.value)}
+                  className="text-xs font-extrabold text-slate-800 bg-transparent focus:outline-none cursor-pointer"
+                >
+                  <option value="default">Light</option>
+                  <option value="dark">Dark Slate</option>
+                  <option value="forest">Forest</option>
+                  <option value="neutral">Monochrome</option>
+                </select>
+              </div>
+            </Tooltip>
+
             {/* Diagram Orientation Toggle (Top-Down vs Left-Right) */}
             <Tooltip title={`Switch Layout: ${orientation === 'TD' ? 'Top-Down' : 'Left-to-Right'}`} arrow>
               <button

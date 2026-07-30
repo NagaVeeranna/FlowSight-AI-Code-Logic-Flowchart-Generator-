@@ -327,23 +327,28 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           <span className="font-mono text-slate-500 font-medium">{charCount} chars</span>
         </div>
 
-        <button
-          onClick={onAnalyze}
-          disabled={isLoading || !code.trim()}
-          className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold shadow-sm hover:shadow-md active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2.5"
-        >
-          {isLoading ? (
-            <>
-              <CircularProgress size={16} color="inherit" />
-              <span>Analyzing Code Logic...</span>
-            </>
-          ) : (
-            <>
-              <Sparkles className="w-4 h-4 text-white" />
-              <span>Generate Flowchart & Logic</span>
-            </>
-          )}
-        </button>
+        <div className="flex items-center space-x-2 w-full sm:w-auto">
+          <span className="hidden md:inline-block text-[11px] text-slate-500 font-bold bg-slate-200/80 px-2 py-1 rounded-lg border border-slate-300">
+            Ctrl + Enter
+          </span>
+          <button
+            onClick={onAnalyze}
+            disabled={isLoading || !code.trim()}
+            className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white text-xs font-extrabold shadow-sm hover:shadow-md active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2.5 cursor-pointer"
+          >
+            {isLoading ? (
+              <>
+                <CircularProgress size={16} color="inherit" />
+                <span>Analyzing Code Logic...</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4 text-white" />
+                <span>Generate Flowchart & Logic</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
