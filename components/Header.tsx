@@ -34,16 +34,16 @@ export const Header: React.FC<HeaderProps> = ({ onToggleHistory, historyCount })
 
       {/* Action Controls */}
       <div className="flex items-center space-x-3">
-        {/* History Toggle Button */}
+        {/* History Toggle Button (Large & Prominent) */}
         <Tooltip title="View Saved Analysis History" arrow>
           <button
             onClick={onToggleHistory}
-            className="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 border border-slate-200 hover:bg-slate-200/80 hover:text-slate-900 transition-all flex items-center space-x-2 shadow-2xs"
+            className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-extrabold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 transition-all flex items-center space-x-2 sm:space-x-2.5 shadow-md hover:shadow-indigo-500/30 ring-2 ring-indigo-500/30 cursor-pointer"
           >
-            <Badge badgeContent={historyCount} color="primary" max={9}>
-              <History className="w-4 h-4 text-indigo-600 mr-1" />
+            <Badge badgeContent={historyCount} color="error" max={99}>
+              <History className="w-4 h-4 sm:w-5 sm:h-5 text-white mr-1" />
             </Badge>
-            <span className="hidden sm:inline">History</span>
+            <span className="inline font-extrabold tracking-wide">Analysis History</span>
           </button>
         </Tooltip>
 
